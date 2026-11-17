@@ -1,0 +1,24 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "backend",
+      "runtimeExecutable": "cmd",
+      "runtimeArgs": ["/c", "cd src\\HR_Mangment2.HttpApi.Host && set ASPNETCORE_ENVIRONMENT=Development&& set ASPNETCORE_URLS=https://localhost:44382&& bin\\Debug\\net10.0\\HR_Mangment2.HttpApi.Host.exe"],
+      "port": 44382,
+      "url": "https://localhost:44382"
+    },
+    {
+      "name": "web",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["frontend/tool/serve_web.mjs", "5000"],
+      "port": 5000
+    },
+    {
+      "name": "web-flutter",
+      "runtimeExecutable": "cmd",
+      "runtimeArgs": ["/c", "cd frontend && D:\\development\\flutter\\bin\\flutter.bat run -d web-server --web-port 5000 --web-hostname localhost --no-web-resources-cdn --dart-define=HR_API_BASE_URL=https://localhost:44382"],
+      "port": 5000
+    }
+  ]
+}

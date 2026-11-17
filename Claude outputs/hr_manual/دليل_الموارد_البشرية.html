@@ -1,0 +1,1157 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>دليل مستخدم الموارد البشرية</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --accent:#00A887; --accent-d:#007a63; --teal:#14B8A6; --ink:#0F172A; --muted:#475569;
+    --line:#E2E8F0; --soft:#F1F5F9; --bg:#F8FAFC;
+    --ok:#10B981; --warn:#F59E0B; --bad:#EF4444; --info:#3B82F6;
+  }
+  @page{ size:A4; margin:15mm 14mm 17mm 14mm;
+    @bottom-center{ content: counter(page); font-family:'Cairo',Tahoma,sans-serif; font-size:9pt; color:#94A3B8; }
+    @bottom-right{ content:"دليل مستخدم الموارد البشرية"; font-family:'Cairo',Tahoma,sans-serif; font-size:8pt; color:#94A3B8; }
+  }
+  @page cover{ margin:0; @bottom-center{content:none} @bottom-right{content:none} }
+  *{ box-sizing:border-box }
+  html,body{ margin:0; padding:0; background:#fff }
+  body{ direction:rtl; font-family:'Cairo','Segoe UI',Tahoma,sans-serif; font-size:10.4pt; line-height:1.8; color:var(--ink);
+        -webkit-print-color-adjust:exact; print-color-adjust:exact }
+  h1,h2,h3,h4{ margin:0; line-height:1.4 }
+  p{ margin:0 0 8px }
+  ul,ol{ margin:4px 0 10px; padding-inline-start:22px }
+  li{ margin-bottom:3px }
+  b,strong{ font-weight:700 }
+
+  /* cover */
+  .cover{ page:cover; height:297mm; width:210mm; position:relative; overflow:hidden;
+          background:linear-gradient(160deg,#0b3b34 0%,#00785f 45%,#14B8A6 100%); color:#fff; }
+  .cover .net{ position:absolute; inset:0; opacity:.16 }
+  .cover .inner{ position:absolute; top:62mm; right:20mm; left:20mm }
+  .cover .chip{ display:inline-block; border:1px solid rgba(255,255,255,.5); border-radius:20px; padding:2px 14px; font-size:10pt; margin-bottom:14px }
+  .cover h1{ font-size:36pt; font-weight:800; margin-bottom:6px }
+  .cover .sub{ font-size:15pt; opacity:.95; margin-bottom:24px }
+  .cover .desc{ font-size:11pt; max-width:140mm; opacity:.92 }
+  .cover .foot{ position:absolute; bottom:22mm; right:20mm; left:20mm; display:flex; justify-content:space-between; font-size:10pt; opacity:.9;
+                border-top:1px solid rgba(255,255,255,.35); padding-top:10px }
+  .logo{ width:58px; height:58px; border-radius:16px; background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.4);
+         display:flex; align-items:center; justify-content:center; font-weight:800; font-size:20pt; margin-bottom:18px; font-family:Inter,'Segoe UI',sans-serif }
+
+  /* structure */
+  .break{ break-before:page }
+  .chapter-head{ background:linear-gradient(135deg,#0b3b34,#00A887); color:#fff; border-radius:14px; padding:18px 22px; margin-bottom:16px }
+  .chapter-head .k{ font-size:10pt; opacity:.85 }
+  .chapter-head h2{ font-size:20pt; font-weight:800 }
+  .chapter-head p{ margin:4px 0 0; opacity:.92; font-size:10.5pt }
+
+  .screen-head{ display:flex; align-items:center; gap:14px; border-bottom:2px solid var(--accent); padding-bottom:10px; margin-bottom:12px }
+  .num{ min-width:46px; height:46px; border-radius:12px; background:var(--accent); color:#fff; font-weight:800; font-size:16pt;
+        display:flex; align-items:center; justify-content:center }
+  .screen-head h3{ font-size:16pt; font-weight:800 }
+  .screen-head .where{ font-size:9pt; color:var(--muted) }
+  .pill{ display:inline-block; font-size:8.5pt; padding:0 9px; border-radius:20px; background:var(--soft); border:1px solid var(--line); color:var(--muted); margin-inline-start:4px; white-space:nowrap }
+  .pill.g{ background:#E7F8F3; border-color:#b6e8da; color:#006b56 }
+  .pill.y{ background:#FEF6E4; border-color:#f8dca0; color:#8a5a00 }
+  .pill.r{ background:#FDECEC; border-color:#f6c4c4; color:#a12424 }
+  .pill.b{ background:#EAF1FE; border-color:#c3d6fb; color:#1d4ed8 }
+
+  h4{ font-size:11.5pt; font-weight:700; color:var(--accent-d); margin:12px 0 6px; display:flex; align-items:center; gap:6px }
+  h4::before{ content:""; width:4px; height:15px; background:var(--accent); border-radius:2px; display:inline-block }
+
+  .lead{ font-size:10.8pt; color:#1e293b; background:var(--bg); border:1px solid var(--line); border-radius:10px; padding:10px 14px; margin-bottom:6px }
+  .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:10px }
+  .card{ border:1px solid var(--line); border-radius:10px; padding:10px 12px; background:#fff; break-inside:avoid }
+  .card .t{ font-weight:700; margin-bottom:2px }
+  .card .d{ font-size:9.6pt; color:var(--muted) }
+
+  ol.steps{ list-style:none; counter-reset:s; padding:0 }
+  ol.steps > li{ counter-increment:s; position:relative; padding-inline-start:34px; margin-bottom:6px; break-inside:avoid }
+  ol.steps > li::before{ content:counter(s); position:absolute; right:0; top:2px; width:23px; height:23px; border-radius:50%;
+                          background:#E7F8F3; color:var(--accent-d); border:1px solid #b6e8da; font-weight:700; font-size:9pt;
+                          display:flex; align-items:center; justify-content:center }
+
+  .note{ border-radius:10px; padding:9px 13px; margin:10px 0; break-inside:avoid; font-size:10pt; border:1px solid }
+  .note .h{ font-weight:700; margin-bottom:2px }
+  .note.tip{ background:#E7F8F3; border-color:#b6e8da }
+  .note.warn{ background:#FEF6E4; border-color:#f8dca0 }
+  .note.rule{ background:#EAF1FE; border-color:#c3d6fb }
+  .note.lock{ background:#FDECEC; border-color:#f6c4c4 }
+
+  table{ width:100%; border-collapse:collapse; margin:6px 0 12px; font-size:9.6pt; break-inside:auto }
+  th,td{ border:1px solid var(--line); padding:5px 8px; text-align:right; vertical-align:top }
+  th{ background:var(--soft); font-weight:700 }
+  tr{ break-inside:avoid }
+
+  .toc{ columns:2; column-gap:22px; font-size:10pt }
+  .toc .grp{ break-inside:avoid; margin-bottom:10px }
+  .toc .gt{ font-weight:800; color:var(--accent-d); border-bottom:1px solid var(--line); margin-bottom:3px }
+  .toc a{ color:var(--ink); text-decoration:none; display:flex; gap:8px }
+  .toc a span.n{ color:var(--accent-d); font-weight:700; min-width:22px }
+
+  /* mock UI */
+  .mock{ border:1px solid var(--line); border-radius:12px; background:var(--bg); padding:10px; margin:8px 0 12px; break-inside:avoid; font-size:8.6pt }
+  .mock .row{ display:flex; gap:8px }
+  .mock .side{ width:30%; background:#fff; border:1px solid var(--line); border-radius:10px; padding:8px }
+  .mock .side .sec{ color:var(--muted); font-size:7.6pt; margin-top:6px }
+  .mock .side .it{ padding:1px 6px; border-radius:6px }
+  .mock .side .it.on{ background:#E7F8F3; color:var(--accent-d); font-weight:700; border-right:3px solid var(--accent) }
+  .mock .main{ flex:1; display:flex; flex-direction:column; gap:8px }
+  .mock .bar{ background:#fff; border:1px solid var(--line); border-radius:10px; padding:4px 10px; display:flex; justify-content:flex-start; gap:10px; direction:ltr }
+  .mock .bar span{ border:1px solid var(--line); border-radius:8px; padding:0 7px; background:var(--bg) }
+  .mock .hero{ background:linear-gradient(135deg,#0b3b34,#00A887); color:#fff; border-radius:10px; padding:10px 12px }
+  .mock .hero b{ font-size:10pt }
+  .mock .btn{ display:inline-block; background:#fff; color:var(--accent-d); border-radius:8px; padding:0 8px; font-weight:700; margin-top:4px }
+  .mock .kpis{ display:grid; grid-template-columns:repeat(3,1fr); gap:6px }
+  .mock .kpi{ background:#fff; border:1px solid var(--line); border-radius:10px; padding:6px 8px }
+  .mock .kpi .v{ font-size:14pt; font-weight:800; color:var(--ink); line-height:1.2 }
+  .mock .kpi .l{ color:var(--muted) }
+  .mock .kpi .w{ color:#8a5a00; font-weight:700 }
+
+  .feature-grid{ display:grid; grid-template-columns:1fr 1fr; gap:9px }
+  .feature{ border:1px solid var(--line); border-radius:12px; padding:10px 12px; break-inside:avoid; background:#fff }
+  .feature .ic{ display:inline-flex; width:26px; height:26px; border-radius:8px; background:#E7F8F3; color:var(--accent-d);
+                align-items:center; justify-content:center; font-weight:800; margin-inline-end:6px; font-size:10pt }
+  .feature .t{ font-weight:800 }
+  .feature p{ font-size:9.6pt; color:var(--muted); margin:3px 0 0 }
+
+  .flow{ display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin:6px 0 10px; font-size:9.4pt }
+  .flow span.s{ background:#fff; border:1px solid var(--line); border-radius:8px; padding:2px 10px; font-weight:600 }
+  .flow span.s.a{ background:#E7F8F3; border-color:#b6e8da; color:#006b56 }
+  .flow span.ar{ color:var(--muted) }
+  .small{ font-size:9pt; color:var(--muted) }
+  .en{ font-family:'Segoe UI',Tahoma,sans-serif; direction:ltr; unicode-bidi:embed }
+</style>
+</head>
+<body>
+
+<!-- ============ COVER ============ -->
+<section class="cover">
+  <svg class="net" viewBox="0 0 210 297" preserveAspectRatio="none" aria-hidden="true">
+    <g stroke="#fff" stroke-width=".4" fill="none">
+      <path d="M105 40 L50 95 M105 40 L105 95 M105 40 L160 95 M50 95 L30 150 M50 95 L55 150 M50 95 L80 150 M105 95 L95 150 M105 95 L115 150 M160 95 L135 150 M160 95 L160 150 M160 95 L185 150"/>
+      <path d="M30 150 L20 210 M80 150 L70 210 M115 150 L120 210 M185 150 L190 210 M55 150 L45 260 M160 150 L150 260"/>
+    </g>
+    <g fill="#fff">
+      <circle cx="105" cy="40" r="4"/><circle cx="50" cy="95" r="3"/><circle cx="105" cy="95" r="3"/><circle cx="160" cy="95" r="3"/>
+      <circle cx="30" cy="150" r="2"/><circle cx="55" cy="150" r="2"/><circle cx="80" cy="150" r="2"/><circle cx="95" cy="150" r="2"/>
+      <circle cx="115" cy="150" r="2"/><circle cx="135" cy="150" r="2"/><circle cx="160" cy="150" r="2"/><circle cx="185" cy="150" r="2"/>
+      <circle cx="20" cy="210" r="1.6"/><circle cx="70" cy="210" r="1.6"/><circle cx="120" cy="210" r="1.6"/><circle cx="190" cy="210" r="1.6"/>
+      <circle cx="45" cy="260" r="1.6"/><circle cx="150" cy="260" r="1.6"/>
+    </g>
+  </svg>
+  <div class="inner">
+    <div class="logo">HR</div>
+    <div class="chip">نظام إدارة الموارد البشرية</div>
+    <h1>دليل مستخدم الموارد البشرية</h1>
+    <div class="sub">شرح كل صفحة في النظام، ماذا تحتوي، وكيف تستخدمها</div>
+    <p class="desc">هذا الدليل موجّه إلى مدير الموارد البشرية. يشرح الشاشات التي تظهر له بالترتيب نفسه الذي يراه في القائمة الجانبية،
+      من لوحة التحكم الرئيسية إلى إعدادات النظام، مع خطوات العمل اليومية والقواعد التي يطبقها النظام تلقائياً.
+      احتفظ به مرجعاً تعود إليه عند الحاجة.</p>
+  </div>
+  <div class="foot"><span>الإصدار 1.0</span><span>تشرين الثاني 2026</span></div>
+</section>
+
+<!-- ============ TOC ============ -->
+<section class="break">
+  <div class="chapter-head"><div class="k">المحتويات</div><h2>فهرس الدليل</h2><p>كل صفحة من النظام مرقّمة بالترتيب نفسه الذي تظهر به في القائمة الجانبية.</p></div>
+  <div class="toc">
+    <div class="grp"><div class="gt">البداية</div>
+      <a href="#intro"><span class="n">أ</span>مقدمة ومميزات النظام</a>
+      <a href="#login"><span class="n">ب</span>الدخول والأمان</a>
+      <a href="#ui"><span class="n">ج</span>التعرف على الواجهة</a>
+      <a href="#flow"><span class="n">د</span>مسار الموافقات وكيف تصل إليك</a>
+    </div>
+    <div class="grp"><div class="gt">القائمة الرئيسية</div>
+      <a href="#p1"><span class="n">1</span>الرئيسية (لوحة التحكم)</a>
+      <a href="#p2"><span class="n">2</span>بانتظار إجرائي</a>
+      <a href="#p3"><span class="n">3</span>طلباتي</a>
+      <a href="#p4"><span class="n">4</span>الإشعارات</a>
+      <a href="#p5"><span class="n">5</span>المطالعات</a>
+      <a href="#p6"><span class="n">6</span>ملفي</a>
+    </div>
+    <div class="grp"><div class="gt">الخدمات الوظيفية</div>
+      <a href="#p7"><span class="n">7</span>قسائم الراتب</a>
+      <a href="#p8"><span class="n">8</span>أرصدة الإجازات</a>
+      <a href="#p9"><span class="n">9</span>العطل</a>
+      <a href="#p10"><span class="n">10</span>العهد</a>
+      <a href="#p11"><span class="n">11</span>العقود</a>
+      <a href="#p12"><span class="n">12</span>التفويض</a>
+    </div>
+    <div class="grp"><div class="gt">التواصل والمتابعة</div>
+      <a href="#p13"><span class="n">13</span>تبليغاتي</a>
+      <a href="#p14"><span class="n">14</span>التعاميم</a>
+      <a href="#p15"><span class="n">15</span>إرسال تبليغ</a>
+      <a href="#p16"><span class="n">16</span>الشكاوى</a>
+      <a href="#p17"><span class="n">17</span>بلاغات الأعطال</a>
+      <a href="#p18"><span class="n">18</span>التقييمات</a>
+      <a href="#p19"><span class="n">19</span>كتب الشكر</a>
+      <a href="#p20"><span class="n">20</span>الإنذارات</a>
+    </div>
+    <div class="grp"><div class="gt">الإدارة والموظفون</div>
+      <a href="#p21"><span class="n">21</span>الموظفون وملف الموظف</a>
+      <a href="#p22"><span class="n">22</span>فريقي</a>
+      <a href="#p23"><span class="n">23</span>حضور الموظفين</a>
+      <a href="#p24"><span class="n">24</span>الأقسام</a>
+      <a href="#p25"><span class="n">25</span>قوالب الدوام</a>
+      <a href="#p26"><span class="n">26</span>أجهزة البصمة</a>
+      <a href="#p27"><span class="n">27</span>استيراد الحضور</a>
+      <a href="#p28"><span class="n">28</span>الحسابات</a>
+    </div>
+    <div class="grp"><div class="gt">التقييم والأداء</div>
+      <a href="#p29"><span class="n">29</span>تقييم الموظفين</a>
+      <a href="#p30"><span class="n">30</span>عناوين تقييم الموارد</a>
+      <a href="#p31"><span class="n">31</span>تنبيهات التقييم</a>
+      <a href="#p32"><span class="n">32</span>تقارير تقييم الموارد</a>
+      <a href="#p33"><span class="n">33</span>معالجو الشكاوى</a>
+    </div>
+    <div class="grp"><div class="gt">المالية والتقارير</div>
+      <a href="#p34"><span class="n">34</span>المالية (كشوف الرواتب)</a>
+      <a href="#p35"><span class="n">35</span>التقارير الشهرية</a>
+      <a href="#p36"><span class="n">36</span>التقارير</a>
+    </div>
+    <div class="grp"><div class="gt">النظام</div>
+      <a href="#p37"><span class="n">37</span>إعدادات النظام</a>
+    </div>
+    <div class="grp"><div class="gt">ملاحق</div>
+      <a href="#ap1"><span class="n">هـ</span>الحالات ومعانيها</a>
+      <a href="#ap2"><span class="n">و</span>ما هو خارج صلاحيتك ولمن تتوجه</a>
+      <a href="#ap3"><span class="n">ز</span>أسئلة شائعة</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ INTRO ============ -->
+<section class="break" id="intro">
+  <div class="chapter-head"><div class="k">أ</div><h2>مقدمة ومميزات النظام</h2><p>ماذا يقدم لك النظام بصفتك مدير الموارد البشرية.</p></div>
+  <p class="lead">النظام منصة واحدة تجمع كل عمل الموارد البشرية: الموظفين وملفاتهم، الحضور والبصمة، الإجازات والأرصدة، الطلبات والموافقات،
+    المطالعات والبلاغات والشكاوى، التقييمات والعقود والإنذارات، والتواصل الرسمي عبر التعاميم والتبليغات. يعمل على الحاسوب والجهاز اللوحي والهاتف،
+    باللغتين العربية والإنجليزية، وبمظهر فاتح أو داكن.</p>
+
+  <h4>دورك في النظام</h4>
+  <p>أنت <b>مدير الموارد البشرية</b>. تظهر لك الصفحات التي يسمح بها دورك فقط، مرتبة في سبع مجموعات. ولأن حسابك مرتبط بملف موظف،
+    يضيف النظام لك دور <b>الموظف</b> تلقائياً، فتظهر لك أيضاً خدماتك الشخصية (قسائم راتبك، عقودك، كتب الشكر الموجهة لك...).</p>
+  <div class="note rule"><div class="h">لماذا لا تظهر لي صفحتا «حضوري» و«الإجازات»؟</div>
+    مدير الموارد البشرية ليس له فترة عمل (دوام) في النظام، مثل المدير التنفيذي ومسؤول النظام، لذلك يُخفي النظام صفحات الحضور والإجازة الشخصية عنه.
+    وصفحة «الأدوار والصلاحيات» من اختصاص مسؤول النظام فلا تظهر لك.</div>
+
+  <h4>أبرز مميزات النظام</h4>
+  <div class="feature-grid">
+    <div class="feature"><span class="ic">1</span><span class="t">لوحة تحكم حيّة</span><p>ترى عند الدخول عدد الحاضرين والغائبين والمجازين اليوم في كل الشركة، وما ينتظر قرارك، والشكاوى الواصلة إليك.</p></div>
+    <div class="feature"><span class="ic">2</span><span class="t">مسار موافقات تلقائي</span><p>يبني النظام خطوات الموافقة لكل طلب حسب صاحبه ونوعه، فيصل الطلب إلى الشخص الصحيح دون توجيه يدوي، مع تذكير دوري للمعتمد.</p></div>
+    <div class="feature"><span class="ic">3</span><span class="t">حضور مرتبط بأجهزة البصمة</span><p>البصمات تصل من الأجهزة مباشرة أو باستيراد ملف Excel/CSV، ويحسب النظام الحضور والتأخر والغياب والإضافي تلقائياً.</p></div>
+    <div class="feature"><span class="ic">4</span><span class="t">أرصدة إجازات دقيقة</span><p>كل حركة على الرصيد مسجلة (استحقاق، ترحيل، حجز، خصم، تعديل، تصحيح عكسي)، ولا يُحذف شيء؛ التصحيح بحركة عكسية.</p></div>
+    <div class="feature"><span class="ic">5</span><span class="t">ملف موظف متكامل</span><p>البيانات، الوثائق مع فحص الفيروسات، فترة العمل، المدير، والسجلات (تقييمات، عقود، إنذارات، كتب شكر، عهد، شكاوى) في مكان واحد.</p></div>
+    <div class="feature"><span class="ic">6</span><span class="t">شكاوى بسرية عالية</span><p>ثلاثة مستويات سرية، ومهل معالجة، وكل اطلاع على شكوى يُسجَّل. لا يطّلع عليها غير المخولين ولا مسؤول النظام.</p></div>
+    <div class="feature"><span class="ic">7</span><span class="t">تواصل رسمي موثّق</span><p>تعاميم لكل الشركة أو لمديري الأقسام، وتبليغات شخصية، مع معرفة من اطّلع ومن لم يطّلع.</p></div>
+    <div class="feature"><span class="ic">8</span><span class="t">تقييم ومتابعة أداء</span><p>تقييمات شهرية من المديرين، وتقييمات خاصة بالموارد لا يراها الموظف، وتنبيهات تلقائية عند انخفاض المعدل.</p></div>
+    <div class="feature"><span class="ic">9</span><span class="t">عقود وإنذارات</span><p>تنبيه قبل انتهاء العقود، وقرار التجديد، ودورة إنذار كاملة مع مهلة رد للموظف وحق الاعتراض.</p></div>
+    <div class="feature"><span class="ic">10</span><span class="t">تفويض عند الغياب</span><p>تفوّض صلاحية الموافقة لشخص آخر لفترة محددة، ويمكنك أيضاً إنشاء تفويض نيابة عن معتمد غائب.</p></div>
+    <div class="feature"><span class="ic">11</span><span class="t">تقارير قابلة للتصدير</span><p>تقارير حضور الشركة وأرصدة الإجازات والطلبات والعقود والإنذارات، تُعرض كجدول أو رسم وتُصدَّر.</p></div>
+    <div class="feature"><span class="ic">12</span><span class="t">أمان وخصوصية</span><p>دخول آمن من صفحة الخادم، تحقق بخطوتين، وكل حقل حساس مخفي عمّن لا يحق له رؤيته، مع سجل تدقيق.</p></div>
+  </div>
+</section>
+
+<!-- ============ LOGIN ============ -->
+<section class="break" id="login">
+  <div class="chapter-head"><div class="k">ب</div><h2>الدخول والأمان</h2><p>الدخول لأول مرة، كلمة السر، والتحقق بخطوتين.</p></div>
+
+  <h4>تسجيل الدخول</h4>
+  <ol class="steps">
+    <li>افتح النظام واضغط <b>تسجيل الدخول</b>. تنتقل إلى صفحة الدخول الآمنة على الخادم (بالعربية أو الإنجليزية).</li>
+    <li>أدخل اسم المستخدم وكلمة السر.</li>
+    <li>إذا كان التحقق بخطوتين مفعّلاً، أدخل الرمز المكوّن من 6 أرقام من تطبيق المصادقة في هاتفك.</li>
+    <li>تعود إلى النظام وتفتح لوحة التحكم مباشرة.</li>
+  </ol>
+
+  <h4>الدخول لأول مرة: الشاشات الإجبارية</h4>
+  <p>قبل أن يسمح لك النظام بأي عمل، قد يطلب منك إحدى شاشتين. لا يمكن تجاوزهما، ويعود إليهما النظام تلقائياً حتى تكملهما.</p>
+  <div class="grid2">
+    <div class="card"><div class="t">1. تغيير كلمة السر المؤقتة</div>
+      <div class="d">تظهر الرسالة «يجب تغيير كلمة السر المؤقتة قبل المتابعة». أدخل كلمة السر الحالية، ثم الجديدة وتأكيدها.
+        تعرض الشاشة شروط كلمة السر (الطول الأدنى، رقم، حرف صغير، حرف كبير، رمز) وتؤشر ما تحقق منها.</div></div>
+    <div class="card"><div class="t">2. تفعيل التحقق بخطوتين</div>
+      <div class="d">تظهر الرسالة «يجب تفعيل التحقق بخطوتين قبل المتابعة». اضغط <b>بدء التفعيل</b>، امسح الرمز بتطبيق مصادقة
+        (مثل Google Authenticator أو Microsoft Authenticator) أو أدخل المفتاح يدوياً، ثم اكتب الرمز من 6 أرقام.</div></div>
+  </div>
+  <div class="note warn"><div class="h">رموز الاسترداد</div>
+    بعد التفعيل تظهر <b>رموز الاسترداد</b> مرة واحدة فقط. احفظها في مكان آمن؛ كل رمز يعمل مرة واحدة، وتستخدمها للدخول إذا فقدت هاتفك.
+    يمكنك إصدار رموز جديدة لاحقاً من «ملفي ← الأمان ← إصدار رموز جديدة».</div>
+
+  <h4>تسجيل الخروج</h4>
+  <p>زر <b>تسجيل الخروج</b> في أسفل القائمة الجانبية. إذا انتهت جلستك تظهر رسالة «انتهت الجلسة. سجل الدخول مرة أخرى».</p>
+
+  <div class="note rule"><div class="h">نسيت كلمة السر؟</div>
+    لا يوجد تسجيل ذاتي ولا استعادة من شاشة الدخول. يرسل لك المدير التنفيذي (أو مسؤول النظام) رابط إعادة تعيين إلى بريدك من صفحة الحسابات.
+    وبالطريقة نفسها ترسل أنت الرابط للموظفين (انظر الصفحة 28).</div>
+</section>
+
+<!-- ============ UI ============ -->
+<section class="break" id="ui">
+  <div class="chapter-head"><div class="k">ج</div><h2>التعرف على الواجهة</h2><p>القائمة الجانبية، الشريط العلوي، وعناصر تتكرر في كل الصفحات.</p></div>
+
+  <div class="mock">
+    <div class="row">
+      <div class="side">
+        <div style="font-weight:800;color:#007a63">HR</div>
+        <div class="sec">القائمة الرئيسية</div>
+        <div class="it on">الرئيسية</div><div class="it">بانتظار إجرائي</div><div class="it">طلباتي</div><div class="it">الإشعارات</div>
+        <div class="sec">الخدمات الوظيفية</div><div class="it">أرصدة الإجازات</div>
+        <div class="sec">التواصل والمتابعة</div><div class="it">التعاميم</div>
+        <div class="sec">الإدارة والموظفون</div><div class="it">الموظفون</div>
+        <div class="sec">…</div>
+        <div class="it" style="margin-top:6px;color:#a12424">تسجيل الخروج</div>
+      </div>
+      <div class="main">
+        <div class="bar"><span>🔔 3</span><span>EN</span><span>☾</span><span>صورتك</span></div>
+        <div class="hero"><b>صباح الخير يا …، فريقك في أفضل حالاته</b><br>لديك 5 عناصر بانتظار إجرائك، وهذا ملخص شهرك.<br><span class="btn">افتح ما بانتظاري</span></div>
+        <div class="kpis"><div class="kpi"><div class="l">الحاضرون اليوم</div><div class="v">142</div></div><div class="kpi"><div class="l">الغائبون اليوم</div><div class="v">6</div><div class="w">انتبه</div></div><div class="kpi"><div class="l">بإجازة اليوم</div><div class="v">9</div></div></div>
+      </div>
+    </div>
+  </div>
+  <p class="small" style="text-align:center">شكل توضيحي مبسّط للواجهة (الأرقام أمثلة).</p>
+
+  <h4>القائمة الجانبية</h4>
+  <p>تعرض صفحاتك في سبع مجموعات: <b>القائمة الرئيسية، الخدمات الوظيفية، التواصل والمتابعة، الإدارة والموظفون، التقييم والأداء، المالية والتقارير، النظام</b>.
+    الصفحة المفتوحة مؤشَّرة بخط أخضر. وإذا كان لديك دور إضافي تظهر صفحاته تحت مجموعة «أخرى».</p>
+  <table>
+    <tr><th>حجم الشاشة</th><th>شكل القائمة</th></tr>
+    <tr><td>حاسوب (عرض كبير)</td><td>قائمة كاملة بالأسماء والأيقونات.</td></tr>
+    <tr><td>جهاز لوحي</td><td>شريط مطوي بالأيقونات فقط؛ مرّر المؤشر على الأيقونة لترى اسمها.</td></tr>
+    <tr><td>هاتف</td><td>القائمة مخفية؛ افتحها من زر القائمة ☰ أعلى الشاشة.</td></tr>
+  </table>
+
+  <h4>الشريط العلوي</h4>
+  <div class="grid2">
+    <div class="card"><div class="t">🔔 جرس الإشعارات</div><div class="d">يعرض عدد الإشعارات غير المقروءة، ويصدر صوتاً خفيفاً عند وصول إشعار جديد. الضغط عليه يفتح صفحة الإشعارات.</div></div>
+    <div class="card"><div class="t">EN / ع اللغة</div><div class="d">يبدّل الواجهة بين العربية والإنجليزية فوراً. العربية هي الافتراضية.</div></div>
+    <div class="card"><div class="t">☾ / ☀ المظهر</div><div class="d">يبدّل بين المظهر الفاتح والداكن، ويُحفظ اختيارك.</div></div>
+    <div class="card"><div class="t">صورتك</div><div class="d">تفتح صفحة «ملفي». إذا لم تضف صورة تظهر الأحرف الأولى من اسمك.</div></div>
+  </div>
+
+  <h4>عناصر مشتركة في كل الصفحات</h4>
+  <ul>
+    <li><b>البحث والتصفية:</b> أغلب القوائم فيها حقل بحث (بالاسم مثلاً) وتبويبات أو مرشحات للحالة.</li>
+    <li><b>عرض المزيد:</b> القوائم الطويلة تُحمَّل على دفعات؛ اضغط «عرض المزيد» في الأسفل.</li>
+    <li><b>شارات الحالة:</b> كل حالة مكتوبة بنص داخل شارة ملونة (أخضر = تم، أصفر = بانتظار أو انتبه، أحمر = مرفوض أو متأخر، أزرق = معلومة). النص يكفي ولو لم تميّز اللون.</li>
+    <li><b>عرض كرسم / عرض كجدول:</b> الرسوم البيانية يمكن تحويلها إلى جدول أرقام.</li>
+    <li><b>السحب للتحديث:</b> على الهاتف اسحب الصفحة للأسفل لتحديث البيانات.</li>
+    <li><b>رسائل الأخطاء:</b> واضحة وتشرح السبب، مثل «تغيرت البيانات منذ فتحها. أعد التحميل ثم حاول مرة أخرى» عندما يعدّل شخص آخر السجل نفسه قبلك.</li>
+  </ul>
+</section>
+
+<!-- ============ FLOW ============ -->
+<section class="break" id="flow">
+  <div class="chapter-head"><div class="k">د</div><h2>مسار الموافقات وكيف تصل إليك</h2><p>قواعد يطبقها النظام تلقائياً على كل طلب وإجازة وتصحيح بصمة.</p></div>
+  <p class="lead">عند تقديم أي طلب يبني النظام خطوات الموافقة حسب <b>صاحب الطلب</b> و<b>جهة التنفيذ</b>. لا يختار مقدم الطلب من يوافق، ولا تحتاج أنت إلى توجيه شيء يدوياً.</p>
+
+  <table>
+    <tr><th>صاحب الطلب</th><th>إجازة أو تصحيح بصمة</th><th>طلب للمخزن</th><th>طلب للمحاسب</th></tr>
+    <tr><td>موظف (ومنه المحاسب ومسؤول المخزن)</td><td>مدير القسم ← <b>الموارد البشرية</b> ← موافق عليه</td><td>مدير القسم ← <b>الموارد البشرية</b> ← المخزن ← مكتمل</td><td>مدير القسم ← <b>الموارد البشرية</b> ← المحاسب ← مكتمل</td></tr>
+    <tr><td>مدير قسم</td><td><b>الموارد البشرية</b> ← موافق عليه</td><td><b>الموارد البشرية</b> ← المخزن ← مكتمل</td><td><b>الموارد البشرية</b> ← المحاسب ← مكتمل</td></tr>
+    <tr><td>المراجع</td><td><b>الموارد البشرية</b> ← موافق عليه</td><td><b>الموارد البشرية</b> ← المخزن ← مكتمل</td><td><b>الموارد البشرية</b> ← المحاسب ← مكتمل</td></tr>
+    <tr><td><b>أنت (مدير الموارد البشرية)</b></td><td>المدير التنفيذي ← موافق عليه</td><td>المخزن مباشرة ← مكتمل</td><td>المدير التنفيذي ← المحاسب ← مكتمل</td></tr>
+    <tr><td>مسؤول النظام</td><td>المدير التنفيذي ← موافق عليه</td><td>المدير التنفيذي ← المخزن ← مكتمل</td><td>المدير التنفيذي ← المحاسب ← مكتمل</td></tr>
+  </table>
+
+  <h4>قواعد مهمة</h4>
+  <ul>
+    <li><b>لا يعتمد أحد طلبه الشخصي</b>، مهما كانت أدواره أو تفويضاته. طلباتك أنت لا تظهر في صندوقك، وتذهب إلى المدير التنفيذي.</li>
+    <li><b>لا توجد مهلة موافقة.</b> يبقى الطلب معلقاً حتى يوافق المسؤول أو يرفض. يصل للمعتمد <b>تذكير دوري</b> فقط، ولا يوافق النظام أو يرفض تلقائياً.</li>
+    <li>مديرو الأقسام والمراجع مرتبطون بك مباشرة، لذلك تبدأ طلباتهم ومطالعاتهم من عندك.</li>
+    <li>إذا رفض أحد المعتمدين، يتوقف الطلب ويصل سبب الرفض إلى صاحبه.</li>
+    <li>عند تغيير مدير موظف، تنتقل العناصر المعلقة عند المدير القديم إلى الجديد تلقائياً.</li>
+  </ul>
+
+  <h4>مثال: إجازة موظف عادي</h4>
+  <div class="flow"><span class="s">الموظف يقدّم</span><span class="ar">←</span><span class="s">بانتظار المدير</span><span class="ar">←</span><span class="s a">بانتظار الموارد البشرية (أنت)</span><span class="ar">←</span><span class="s">موافق عليه</span></div>
+  <p>عند تقديم الإجازة تُحجز الأيام من رصيد الموظف (محجوز). عند موافقتك الأخيرة تتحول إلى مخصوم، وعند الرفض أو الإلغاء يُفك الحجز وتعود الأيام.</p>
+</section>
+
+<!-- ============ P1 HOME ============ -->
+<section class="break" id="p1">
+  <div class="screen-head"><div class="num">1</div><div><h3>الرئيسية (لوحة التحكم)</h3><div class="where">القائمة الرئيسية <span class="pill g">أول صفحة بعد الدخول</span></div></div></div>
+  <p class="lead">صورة سريعة عن يومك وعن الشركة: ما ينتظر قرارك، حضور اليوم في كل الشركة، الشكاوى الواصلة إليك، والإشعارات غير المقروءة.
+    كل بطاقة قابلة للضغط وتأخذك إلى الصفحة المفصلة.</p>
+
+  <h4>ماذا تحتوي</h4>
+  <table>
+    <tr><th style="width:30%">الجزء</th><th>ماذا يعرض</th><th style="width:22%">عند الضغط</th></tr>
+    <tr><td><b>الترحيب</b></td><td>تحية حسب الوقت (صباح الخير / مساء الخير) مع اسمك وتاريخ اليوم، وجملة تلخص وضعك: «لديك N عنصر بانتظار إجرائك» أو «لا شيء بانتظارك الآن».</td><td>زر <b>افتح ما بانتظاري</b> يفتح صفحة 2.</td></tr>
+    <tr><td><b>بانتظار إجرائي</b></td><td>عدد العناصر التي تنتظر قرارك مقسمة حسب النوع: طلبات، مطالعات، بلاغات، تقارير الأقسام، اعتراضات التقييم، قرارات العقود، قرارات الإنذار، الاطلاع على التعاميم والتبليغات... ومنها ما وصلك «عبر تفويض».</td><td>يفتح القائمة المفصلة.</td></tr>
+    <tr><td><b>الحاضرون اليوم</b></td><td>عدد الحاضرين في كل الشركة اليوم، و«منهم N متأخر».</td><td>صفحة حضور الموظفين (23).</td></tr>
+    <tr><td><b>الغائبون اليوم</b></td><td>من ليس له بصمة ولا إجازة اليوم. تظهر شارة <span class="pill y">انتبه</span> إذا كان العدد أكبر من صفر.</td><td>صفحة حضور الموظفين (23).</td></tr>
+    <tr><td><b>بإجازة اليوم</b></td><td>عدد الإجازات المعتمدة لهذا اليوم.</td><td>—</td></tr>
+    <tr><td><b>الشكاوى الواصلة</b></td><td>تظهر إذا كنت معالج شكاوى: عدد الشكاوى المفتوحة بانتظار معالجتك، و«منها N متأخرة» مع شارة <span class="pill y">متأخرة</span>. أرقام فقط، دون أي محتوى.</td><td>صفحة الشكاوى (16).</td></tr>
+    <tr><td><b>غير مقروءة</b></td><td>عدد الإشعارات التي لم تقرأها بعد.</td><td>صفحة الإشعارات (4).</td></tr>
+  </table>
+
+  <h4>كيف تستخدمها يومياً</h4>
+  <ol class="steps">
+    <li>ابدأ يومك من هنا: انظر إلى «بانتظار إجرائي» واضغط <b>افتح ما بانتظاري</b> لتنجز الموافقات.</li>
+    <li>راجع بطاقة <b>الغائبون اليوم</b>؛ إذا ظهرت «انتبه» افتح حضور الموظفين لمعرفة الأسماء.</li>
+    <li>تابع بطاقة الشكاوى المتأخرة إذا كنت معالجاً؛ الشكوى المتأخرة تجاوزت مهلة المعالجة.</li>
+    <li>لتحديث الأرقام اسحب الصفحة للأسفل (الهاتف) أو أعد فتحها.</li>
+  </ol>
+  <div class="note tip"><div class="h">نصيحة</div>أرقام اللوحة مأخوذة مباشرة من النظام في لحظة فتحها، فهي تعكس الحالة الفعلية ولا تحتاج إلى أي إدخال منك.</div>
+</section>
+
+<!-- ============ P2 INBOX ============ -->
+<section class="break" id="p2">
+  <div class="screen-head"><div class="num">2</div><div><h3>بانتظار إجرائي</h3><div class="where">القائمة الرئيسية</div></div></div>
+  <p class="lead">صندوق القرارات: كل طلب وصل إلى خطوتك في مسار الموافقة (طلبات عامة، إجازات، تصحيحات بصمة) لتوافق عليه أو ترفضه.</p>
+
+  <h4>ماذا تحتوي</h4>
+  <ul>
+    <li>قائمة الطلبات المعلقة عندك، لكل طلب: الموظف، نوع الطلب، ملخص التفاصيل، و<b>بانتظار منذ</b> (كم مضى عليه).</li>
+    <li>الطلبات التي وصلتك بالتفويض تحمل علامة <span class="pill b">مفوّض من</span> مع اسم صاحب الصلاحية الأصلي.</li>
+  </ul>
+
+  <h4>كيف تتخذ القرار</h4>
+  <ol class="steps">
+    <li>اضغط على الطلب لفتح صفحة التفاصيل.</li>
+    <li>راجع: صاحب الطلب، النوع، الوصف، الفترة أو الأيام، المرفقات، و<b>خطوات الموافقة</b> (من وافق قبلك ومن بعدك) و<b>السجل الزمني</b>.</li>
+    <li>اضغط <b>موافقة</b> لتمرير الطلب للخطوة التالية (أو اعتماده نهائياً إن كنت الخطوة الأخيرة).</li>
+    <li>أو اضغط <b>رفض</b> واكتب <b>سبب الرفض</b>؛ السبب إلزامي ويصل إلى الموظف.</li>
+  </ol>
+  <h4>حالات الطلب التي ستراها</h4>
+  <p><span class="pill y">بانتظار المدير</span> <span class="pill y">بانتظار الموارد البشرية</span> <span class="pill y">بانتظار المدير التنفيذي</span> <span class="pill y">بانتظار جهة التنفيذ</span>
+     <span class="pill g">موافق عليه</span> <span class="pill g">مكتمل</span> <span class="pill r">مرفوض</span> <span class="pill">ملغى</span></p>
+  <p>ولكل خطوة قرار: <span class="pill">لم تصل بعد</span> <span class="pill y">بانتظار القرار</span> <span class="pill g">موافقة</span> <span class="pill g">موافقة بالتقديم</span> <span class="pill r">رفض</span>.</p>
+  <div class="note rule"><div class="h">تذكير</div>طلبات المخزن تُنفَّذ بعد موافقتك من شاشة صرف المخزن لدى مسؤول المخزن، وطلبات المحاسب تصل للمحاسب. أنت تعتمد فقط، والتنفيذ عند الجهة.</div>
+</section>
+
+<!-- ============ P3 MY REQUESTS ============ -->
+<section class="break" id="p3">
+  <div class="screen-head"><div class="num">3</div><div><h3>طلباتي</h3><div class="where">القائمة الرئيسية</div></div></div>
+  <p class="lead">الطلبات التي قدّمتها أنت شخصياً، وحالة كل منها، وتقديم طلب جديد.</p>
+  <h4>ماذا تحتوي</h4>
+  <ul>
+    <li>قائمة طلباتك مع النوع والتاريخ والحالة.</li>
+    <li>زر <b>طلب جديد</b>.</li>
+    <li>عند فتح أي طلب: خطوات الموافقة والسجل الزمني، وزر <b>إلغاء الطلب</b> ما دام لم يُحسم.</li>
+  </ul>
+  <h4>تقديم طلب جديد</h4>
+  <ol class="steps">
+    <li>اضغط <b>طلب جديد</b> واختر <b>نوع الطلب</b>.</li>
+    <li>اكتب <b>الوصف</b>. إذا كان الطلب لمادة من المخزن اختر <b>الصنف</b> و<b>الكمية</b>.</li>
+    <li>اضغط <b>تقديم</b>. تظهر رسالة «تم تقديم الطلب».</li>
+  </ol>
+  <div class="note rule"><div class="h">أين يذهب طلبك؟</div>طلباتك العامة والمالية تذهب إلى <b>المدير التنفيذي</b>، وطلبات المخزن تذهب إلى المخزن مباشرة. بعض الأنواع لها شاشة خاصة،
+    فتظهر رسالة «هذا النوع يُقدم من شاشته الخاصة».</div>
+</section>
+
+<!-- ============ P4 NOTIFICATIONS ============ -->
+<section class="break" id="p4">
+  <div class="screen-head"><div class="num">4</div><div><h3>الإشعارات</h3><div class="where">القائمة الرئيسية · وأيضاً من جرس الشريط العلوي</div></div></div>
+  <p class="lead">كل حدث يخصك يصلك كإشعار: طلب جديد بانتظارك، قرار على طلبك، تعميم أو تبليغ، اعتراض على تقييم، عقد قارب على الانتهاء، تذكير بموافقة متأخرة، وغيرها.</p>
+  <h4>ماذا تحتوي</h4>
+  <ul>
+    <li>قائمة الإشعارات من الأحدث إلى الأقدم، لكل إشعار عنوان ونص ووقت. غير المقروء يحمل شارة <span class="pill g">جديد</span>.</li>
+    <li>مفتاح <b>غير المقروءة فقط</b> لعرض الجديد وحده.</li>
+  </ul>
+  <h4>كيف تستخدمها</h4>
+  <ol class="steps">
+    <li>اضغط على الإشعار؛ يُعلَّم كمقروء ويأخذك مباشرة إلى العنصر المعني (الطلب، التعميم، العقد...).</li>
+    <li>العدد على الجرس يقل تلقائياً كلما قرأت إشعاراً.</li>
+  </ol>
+  <div class="note tip"><div class="h">لغة الإشعارات</div>تصلك الإشعارات والرسائل البريدية باللغة التي تختارها في «ملفي ← لغة الإشعارات والبريد».</div>
+  <div class="note lock"><div class="h">خصوصية</div>إشعارات الشكاوى لا تحمل أي محتوى من الشكوى، فقط أنها وصلت أو تغيّرت حالتها.</div>
+</section>
+
+<!-- ============ P5 MEMOS ============ -->
+<section class="break" id="p5">
+  <div class="screen-head"><div class="num">5</div><div><h3>المطالعات</h3><div class="where">القائمة الرئيسية</div></div></div>
+  <p class="lead">المطالعة رسالة رسمية مكتوبة يرفعها الموظف إلى إدارته (اقتراح، استفسار، طلب توضيح...). تصل أولاً إلى المدير المباشر، ثم قد تُحوَّل إليك.</p>
+  <h4>التبويبات</h4>
+  <div class="grid2">
+    <div class="card"><div class="t">بانتظاري</div><div class="d">المطالعات الواصلة إليك: من مديري الأقسام والمراجع مباشرة، ومن الموظفين بعد أن يحولها مديرهم إلى الموارد البشرية.</div></div>
+    <div class="card"><div class="t">مطالعاتي</div><div class="d">المطالعات التي كتبتها أنت، مع حالتها وعند من هي الآن.</div></div>
+  </div>
+  <h4>الإجراءات على المطالعة الواردة</h4>
+  <table>
+    <tr><th style="width:30%">الإجراء</th><th>متى تستخدمه</th></tr>
+    <tr><td><b>تحويل لطلب إجازة</b></td><td>إذا كان مضمون المطالعة طلب إجازة؛ ينشئ النظام طلب إجازة ويظهر في المطالعة «طلب الإجازة الناتج».</td></tr>
+    <tr><td><b>تحويل لبلاغ</b></td><td>إذا كانت تخص عطلاً؛ يُنشأ بلاغ عطل ويظهر «البلاغ الناتج».</td></tr>
+    <tr><td><b>إغلاق المطالعة</b></td><td>عند الانتهاء منها (بعد الرد أو الاطلاع).</td></tr>
+  </table>
+  <h4>كتابة مطالعة جديدة</h4>
+  <ol class="steps"><li>اضغط <b>مطالعة جديدة</b>.</li><li>اكتب <b>نص المطالعة</b> واضغط إرسال. مطالعتك تذهب إلى المدير التنفيذي.</li></ol>
+</section>
+
+<!-- ============ P6 PROFILE ============ -->
+<section class="break" id="p6">
+  <div class="screen-head"><div class="num">6</div><div><h3>ملفي</h3><div class="where">القائمة الرئيسية · وأيضاً من صورتك أعلى الشاشة</div></div></div>
+  <p class="lead">بياناتك الشخصية والوظيفية، صورتك، وإعدادات أمان حسابك.</p>
+  <h4>ماذا تحتوي</h4>
+  <table>
+    <tr><th style="width:28%">القسم</th><th>المحتوى</th></tr>
+    <tr><td><b>صورتي</b></td><td>إضافة صورة أو تغييرها أو حذفها. تظهر صورتك بجانب اسمك لكل من يرى اسمك في النظام. عند حذفها ترجع الأحرف الأولى بدلها.</td></tr>
+    <tr><td><b>بياناتي الوظيفية</b></td><td>الرقم الوظيفي، القسم، المسمى الوظيفي، تاريخ المباشرة، المدير المباشر، البريد الإلكتروني، الهاتف، الأدوار. هذه للقراءة فقط.</td></tr>
+    <tr><td><b>الحساب</b></td><td>اسم المستخدم، و<b>لغة الإشعارات والبريد</b> (العربية أو الإنجليزية) ويمكنك تغييرها.</td></tr>
+    <tr><td><b>الأمان</b></td><td><b>تغيير كلمة السر</b>، وحالة <b>التحقق بخطوتين</b> (مفعّل / غير مفعّل)، و<b>إصدار رموز جديدة</b> للاسترداد.</td></tr>
+  </table>
+  <h4>تغيير كلمة السر</h4>
+  <ol class="steps"><li>من «الأمان» اضغط <b>تغيير كلمة السر</b>.</li><li>أدخل الحالية ثم الجديدة وتأكيدها، وتأكد من تحقق كل الشروط المعروضة.</li><li>اضغط حفظ؛ تظهر «تم تغيير كلمة السر».</li></ol>
+</section>
+
+<!-- ============ P7 PAYSLIPS ============ -->
+<section class="break" id="p7">
+  <div class="screen-head"><div class="num">7</div><div><h3>قسائم الراتب</h3><div class="where">الخدمات الوظيفية <span class="pill">خدمة شخصية</span></div></div></div>
+  <p class="lead">قسائم راتبك الشهرية بعد أن يغلق المحاسب كشف الرواتب.</p>
+  <ul>
+    <li>لكل قسيمة: الشهر، الإجمالي، الإضافات، الاستقطاعات، <b>الصافي</b>، وحالة <b>التسليم</b> (سُلّم / لم يُسلَّم بعد).</li>
+    <li>تظهر القسيمة فقط بعد <b>الإغلاق النهائي</b> للكشف؛ قبلها تظهر «لا توجد قسائم بعد».</li>
+  </ul>
+  <div class="note lock"><div class="h">خصوصية</div>ترى قسائمك أنت فقط. رواتب الموظفين وبياناتهم المالية لدى المحاسب، ولا تظهر لمديري الأقسام.</div>
+</section>
+
+<!-- ============ P8 LEAVE BALANCES ============ -->
+<section class="break" id="p8">
+  <div class="screen-head"><div class="num">8</div><div><h3>أرصدة الإجازات</h3><div class="where">الخدمات الوظيفية <span class="pill g">من اختصاصك</span></div></div></div>
+  <p class="lead">إدارة رصيد الإجازة السنوية لكل موظف: عرضه، تعديله، مراجعة حركاته، وتصحيح إجازة معتمدة.</p>
+  <h4>ماذا تحتوي</h4>
+  <ol class="steps">
+    <li><b>اختر موظفاً</b> من الحقل في الأعلى.</li>
+    <li>يظهر رصيده: <b>استحقاق السنة</b>، <b>المضافة من السنة الماضية</b>، <b>التعديلات</b>، <b>المستخدم</b>، <b>المحجوز</b>، <b>المتبقي</b>، و<b>بداية السنة القادمة</b> و<b>استحقاق السنة القادمة</b>.</li>
+    <li>تحته تبويبان: <b>الإجازات</b> (طلبات إجازته) و<b>حركات الرصيد</b> (كل حركة بتاريخها).</li>
+  </ol>
+  <h4>أنواع حركات الرصيد</h4>
+  <p><span class="pill g">استحقاق</span> <span class="pill b">ترحيل</span> <span class="pill y">حجز</span> <span class="pill">فك حجز</span> <span class="pill r">خصم</span> <span class="pill b">تعديل</span> <span class="pill">تصحيح عكسي</span></p>
+
+  <h4>تعديل الرصيد</h4>
+  <ol class="steps">
+    <li>بعد اختيار الموظف اضغط <b>تعديل الرصيد</b>.</li>
+    <li>اكتب عدد <b>الأيام</b>: موجب للإضافة وسالب للخصم، واكتب <b>السبب</b>.</li>
+    <li>احفظ؛ تظهر حركة «تعديل» في سجل الرصيد.</li>
+  </ol>
+  <h4>تصحيح إجازة معتمدة</h4>
+  <p>إذا اعتُمدت إجازة بالخطأ أو أُلغيت فعلياً، افتحها من تبويب «الإجازات» واضغط <b>تصحيح إجازة معتمدة</b> واكتب السبب. النتيجة:
+    «أُعيدت الأيام وأُلغي الطلب»، مع حركة «تصحيح عكسي».</p>
+  <div class="note rule"><div class="h">قواعد</div>
+    <ul style="margin:0">
+      <li>لا تُحذف أي حركة رصيد؛ كل تصحيح يكون بحركة عكسية حتى يبقى السجل كاملاً.</li>
+      <li>لا يمكنك تعديل رصيدك أنت.</li>
+      <li>عدد أيام الإجازة السنوية الافتراضي لكل الموظفين يُضبط من «إعدادات النظام ← الإجازة السنوية» (الصفحة 37). استخدم «تعديل الرصيد» لتصحيح رصيد شخص واحد.</li>
+    </ul></div>
+</section>
+
+<!-- ============ P9 HOLIDAYS ============ -->
+<section class="break" id="p9">
+  <div class="screen-head"><div class="num">9</div><div><h3>العطل</h3><div class="where">الخدمات الوظيفية <span class="pill g">من اختصاصك</span></div></div></div>
+  <p class="lead">العطل الرسمية والعطلة الأسبوعية للشركة. النظام يستخدمها في حساب الحضور (لا يُحسب الموظف غائباً في يوم عطلة) وفي حساب أيام الإجازة.</p>
+  <h4>العطل الرسمية</h4>
+  <ol class="steps">
+    <li>اضغط <b>عطلة جديدة</b>.</li>
+    <li>اكتب <b>الاسم بالعربية</b> و<b>الاسم بالإنجليزية</b> واختر التاريخ.</li>
+    <li>احفظ. للتعديل اضغط على العطلة، وللحذف <b>حذف العطلة</b>.</li>
+  </ol>
+  <div class="note warn"><div class="h">انتبه</div>العطلة سجل ليوم واحد. العطلة الممتدة (مثل عيد من 3 أيام) تُدخل بسجل لكل يوم.</div>
+  <h4>العطلة الأسبوعية في تقويم الشركة</h4>
+  <p>اختر أيام العطلة الأسبوعية للشركة (مثل الجمعة والسبت). هذا الإعداد يحدد المواعيد الإدارية مثل آخر يوم دوام في الشهر ومهل التقييم والتذكيرات،
+    <b>ولا يغير قوالب الدوام</b>؛ أيام دوام كل موظف تأتي من قالبه (الصفحة 25).</p>
+</section>
+
+<!-- ============ P10 CUSTODY ============ -->
+<section class="break" id="p10">
+  <div class="screen-head"><div class="num">10</div><div><h3>العهد</h3><div class="where">الخدمات الوظيفية</div></div></div>
+  <p class="lead">العهدة مادة يسلمها مسؤول المخزن لموظف (شخصية) أو لقسم (مشتركة)، مثل حاسوب أو أداة عمل.</p>
+  <h4>التبويبات</h4>
+  <table>
+    <tr><th style="width:24%">التبويب</th><th>المحتوى</th></tr>
+    <tr><td><b>كل العهد</b></td><td>كل عهد الشركة: المادة، صاحبها، النوع (شخصية / مشتركة)، وحالتها: <span class="pill y">بانتظار تأكيد الاستلام</span> <span class="pill g">مستلمة</span> <span class="pill">مُرجعة</span>.</td></tr>
+    <tr><td><b>عهدتي</b></td><td>العهد المسلّمة لك. إذا كانت بانتظار تأكيدك اضغط <b>تأكيد الاستلام</b>.</td></tr>
+    <tr><td><b>الجرد</b></td><td>نتائج جرد العهد المشتركة في الأقسام: المتوقع والمعدود، والنتيجة <span class="pill g">مطابق</span> أو <span class="pill r">يوجد فرق</span> (ويُشعَر مسؤول المخزن تلقائياً).</td></tr>
+  </table>
+  <div class="note rule"><div class="h">من يفعل ماذا</div>إضافة العهدة وإرجاعها من عمل مسؤول المخزن، والجرد من عمل مدير القسم. دورك هنا المتابعة والاطلاع، وتأكيد استلام عهدتك.</div>
+</section>
+
+<!-- ============ P11 CONTRACTS ============ -->
+<section class="break" id="p11">
+  <div class="screen-head"><div class="num">11</div><div><h3>العقود</h3><div class="where">الخدمات الوظيفية <span class="pill g">من اختصاصك</span></div></div></div>
+  <p class="lead">عقود عمل الموظفين: إنشاؤها، متابعة انتهائها، والتوصية والقرار بالتجديد أو عدمه.</p>
+  <h4>التبويبات</h4>
+  <ul><li><b>كل العقود:</b> كل عقود الشركة مع الحالة والمتبقي على الانتهاء.</li><li><b>عقودي:</b> عقدك أنت.</li></ul>
+  <h4>حالات العقد</h4>
+  <p><span class="pill g">ساري</span> <span class="pill y">قاربت على الانتهاء</span> <span class="pill y">بانتظار التوصية</span> <span class="pill y">بانتظار القرار</span> <span class="pill r">القرار متأخر</span> <span class="pill g">جُدّد</span> <span class="pill">لم يُجدّد</span> <span class="pill">منتهي</span></p>
+  <h4>إنشاء عقد</h4>
+  <ol class="steps"><li>اضغط <b>عقد جديد</b>، اختر الموظف و<b>نوع العقد</b> وتاريخي البداية والنهاية.</li><li>أرفق العقد الورقي الممسوح في <b>مرفقات العقد</b> (اختياري) واحفظ.</li></ol>
+  <h4>دورة التجديد</h4>
+  <div class="flow"><span class="s">تنبيه قبل الانتهاء</span><span class="ar">←</span><span class="s">رفع التوصية</span><span class="ar">←</span><span class="s a">إصدار القرار</span><span class="ar">←</span><span class="s">إنشاء عقد التجديد / عدم التجديد</span></div>
+  <ol class="steps">
+    <li>قبل انتهاء العقد بعدد الأيام المحدد في الإعدادات يصلك تنبيه، ويظهر العقد بحالة «قاربت على الانتهاء».</li>
+    <li>افتح العقد واضغط <b>رفع التوصية</b>: تجديد أو عدم التجديد، مع <b>موقف الموظف</b> و<b>ملاحظة داخلية</b>.</li>
+    <li>اضغط <b>إصدار القرار</b> قبل <b>موعد القرار</b>، واكتب <b>رسالة للموظف</b> (تصله فوراً). تظهر «أُبلغ الموظف».</li>
+    <li>عند التجديد اضغط <b>إنشاء عقد التجديد</b> لإنشاء العقد الجديد.</li>
+  </ol>
+  <div class="note warn"><div class="h">انتبه</div>حذف مرفق من العقد يخفيه من العقد فقط، ويبقى مسجلاً في سجل التدقيق. الملاحظة الداخلية لا يراها الموظف.</div>
+</section>
+
+<!-- ============ P12 DELEGATIONS ============ -->
+<section class="break" id="p12">
+  <div class="screen-head"><div class="num">12</div><div><h3>التفويض</h3><div class="where">الخدمات الوظيفية</div></div></div>
+  <p class="lead">عندما يغيب معتمد (أنت أو غيرك)، يُفوَّض شخص آخر بالموافقات لفترة محددة حتى لا تتوقف الطلبات.</p>
+  <h4>التبويبات</h4>
+  <ul>
+    <li><b>تفويضاتي:</b> ما <b>أعطيته</b> لغيرك وما <b>وصلني</b> من غيري.</li>
+    <li><b>كل التفويضات:</b> كل تفويضات الشركة (خاص بالموارد البشرية).</li>
+  </ul>
+  <h4>إنشاء تفويض</h4>
+  <ol class="steps">
+    <li>اضغط <b>تفويض جديد</b>.</li>
+    <li>إذا كان التفويض عن شخص غائب غيرك، اختره في حقل <b>عن المعتمد الغائب</b> (اختياري، للموارد البشرية فقط). اتركه فارغاً ليكون التفويض عنك.</li>
+    <li>اختر <b>المفوَّض</b> (يقترح النظام المؤهلين فقط)، والفترة من/إلى.</li>
+    <li>اختر <b>النطاق</b>: كل الموافقات، أو الطلبات، أو المطالعات والبلاغات، أو التقرير اليومي وغرفه.</li>
+    <li>احفظ. يظهر التفويض بحالة <span class="pill b">مجدول</span> ثم <span class="pill g">ساري</span> ثم <span class="pill">منتهي</span>، ويمكن <b>إلغاء التفويض</b> في أي وقت.</li>
+  </ol>
+  <div class="note lock"><div class="h">حدود التفويض</div>لا يشمل التفويض الشكاوى ولا المالية ولا التقييم. ويبقى صاحب الصلاحية قادراً على اتخاذ القرار بنفسه خلال فترة التفويض.</div>
+</section>
+
+<!-- ============ P13 MY NOTICES ============ -->
+<section class="break" id="p13">
+  <div class="screen-head"><div class="num">13</div><div><h3>تبليغاتي</h3><div class="where">التواصل والمتابعة</div></div></div>
+  <p class="lead">التبليغ رسالة رسمية شخصية موجّهة لموظف بعينه (أو عدة موظفين) ويجب أن يؤكد اطلاعه عليها. هذه الصفحة للتبليغات الواصلة إليك أنت.</p>
+  <ul>
+    <li>القائمة تعرض التبليغات مع الحالة: <span class="pill y">بانتظار الاطلاع</span> أو <span class="pill g">اطّلعت</span>.</li>
+    <li>مرشح <b>غير المؤكدة</b> يعرض ما لم تطّلع عليه بعد.</li>
+    <li>افتح التبليغ واقرأه ثم اضغط <b>اطّلعت</b>؛ يُسجَّل وقت اطلاعك (اطّلعت في...).</li>
+  </ul>
+  <div class="note tip"><div class="h">الفرق بين التبليغ والتعميم</div>
+    <b>التبليغ</b> شخصي لأشخاص محددين بالاسم (مثل إبلاغ موظف بقرار يخصه). <b>التعميم</b> عام لمجموعة (كل الشركة أو مديري الأقسام). لإرسال تبليغ انظر الصفحة 15.</div>
+</section>
+
+<!-- ============ P14 CIRCULARS ============ -->
+<section class="break" id="p14">
+  <div class="screen-head"><div class="num">14</div><div><h3>التعاميم</h3><div class="where">التواصل والمتابعة</div></div></div>
+  <p class="lead">إرسال تعاميم رسمية لمجموعة، واستلام التعاميم الواردة، ومتابعة من أكد الاستلام.</p>
+  <h4>التبويبات</h4>
+  <table>
+    <tr><th style="width:22%">التبويب</th><th>المحتوى</th></tr>
+    <tr><td><b>الواردة</b></td><td>التعاميم التي وصلتك، مع الحالة <span class="pill y">بانتظار التأكيد</span> أو <span class="pill g">مؤكد</span>. مرشح «غير المؤكدة». افتح التعميم واضغط <b>تأكيد الاستلام</b>.</td></tr>
+    <tr><td><b>المرسلة</b></td><td>التعاميم التي أرسلتها، ولكل تعميم قائمة المستلمين: من <b>أكد الاستلام</b> ومن <b>لم يؤكد</b>.</td></tr>
+  </table>
+  <h4>إرسال تعميم</h4>
+  <ol class="steps">
+    <li>اضغط <b>تعميم جديد</b>.</li>
+    <li>اختر <b>المستلمين</b>: <b>فريقي</b> (المرتبطون بك مباشرة) أو <b>مديرو الأقسام</b> أو <b>كل الشركة</b>.</li>
+    <li>اكتب <b>العنوان</b> و<b>النص</b> واضغط <b>إرسال</b>. تظهر «أُرسل التعميم» ويصل إشعار لكل مستلم.</li>
+  </ol>
+  <div class="note warn"><div class="h">انتبه قبل الإرسال</div>لا يُعدّل التعميم ولا يُحذف بعد الإرسال. راجع النص جيداً.</div>
+</section>
+
+<!-- ============ P15 SEND NOTICE ============ -->
+<section class="break" id="p15">
+  <div class="screen-head"><div class="num">15</div><div><h3>إرسال تبليغ</h3><div class="where">التواصل والمتابعة</div></div></div>
+  <p class="lead">إرسال تبليغ رسمي شخصي لموظف أو أكثر، ومتابعة اطلاعهم عليه.</p>
+  <h4>إرسال تبليغ جديد</h4>
+  <ol class="steps">
+    <li>اضغط <b>تبليغ جديد</b>.</li>
+    <li>في <b>المستلمون</b> اضغط <b>إضافة موظف</b> لكل شخص (موظف واحد على الأقل).</li>
+    <li>اكتب <b>عنوان التبليغ</b> و<b>نص التبليغ</b>.</li>
+    <li>اضغط <b>إرسال</b>؛ تظهر «أُرسل التبليغ».</li>
+  </ol>
+  <h4>متابعة التبليغات المرسلة</h4>
+  <p>القائمة تعرض كل تبليغ أرسلته مع العداد <b>اطّلع / المستلمون</b>. افتح التبليغ لترى لكل مستلم: <span class="pill g">اطّلع</span> مع الوقت، أو <span class="pill y">لم يطّلع</span>.</p>
+  <div class="note warn"><div class="h">انتبه</div>لا يُعدّل التبليغ ولا يُحذف بعد الإرسال.</div>
+</section>
+
+<!-- ============ P16 COMPLAINTS ============ -->
+<section class="break" id="p16">
+  <div class="screen-head"><div class="num">16</div><div><h3>الشكاوى</h3><div class="where">التواصل والمتابعة <span class="pill r">سرية</span></div></div></div>
+  <p class="lead">معالجة الشكاوى الواصلة إليك بسرية تامة، وتقديم شكوى شخصية إن احتجت.</p>
+  <h4>التبويبات</h4>
+  <ul>
+    <li><b>صندوق المعالجة:</b> الشكاوى المسندة إليك، لكل شكوى: الرقم المرجعي، المستوى، الموضوع، <b>المهلة</b>، وشارة <span class="pill r">متأخرة</span> إذا تجاوزتها.</li>
+    <li><b>شكاواي:</b> الشكاوى التي قدّمتها أنت (إن وُجدت).</li>
+  </ul>
+  <h4>مستويات السرية ومسار الشكوى</h4>
+  <table>
+    <tr><th>المستوى</th><th>المعنى</th></tr>
+    <tr><td><span class="pill">عادية</span></td><td>تبدأ عند مدير القسم.</td></tr>
+    <tr><td><span class="pill y">سرية</span></td><td>تبدأ عند مدير الموارد البشرية.</td></tr>
+    <tr><td><span class="pill r">سرية للغاية</span></td><td>تبدأ عند المدير التنفيذي.</td></tr>
+  </table>
+  <p>والمسار يكون: <span class="pill">عند مدير القسم</span> <span class="pill">عند مدير الموارد البشرية</span> <span class="pill">عند المدير التنفيذي</span> ثم <span class="pill g">مغلقة</span>.
+    إذا كانت الشكوى ضد شخص، يرفع النظام مستواها تلقائياً حسب هوية المشتكى عليه حتى لا تصل إليه.</p>
+  <h4>معالجة شكوى</h4>
+  <ol class="steps">
+    <li>افتح الشكوى من صندوق المعالجة. ترى: مقدم الشكوى، المشتكى عليه (إن وُجد)، المستوى، الموضوع، التفاصيل، المرفقات، والإجراءات السابقة.</li>
+    <li>اضغط <b>إضافة إجراء</b> واختر نوعه: <b>ملاحظة</b> أو <b>اجتماع</b> أو <b>تحقيق</b> أو <b>متابعة</b>، واكتب التفاصيل. الإجراء لا يُعدّل ولا يُحذف بعد حفظه.</li>
+    <li>عند الحاجة: <b>رفع المستوى</b> (لا يمكن خفضه بعد رفعه) أو <b>تحويل</b> الشكوى للجهة الأعلى.</li>
+    <li>عند الانتهاء: <b>إغلاق بقرار</b> واكتب <b>القرار النهائي</b>.</li>
+  </ol>
+  <div class="note lock"><div class="h">قواعد السرية</div>
+    <ul style="margin:0">
+      <li>كل فتح لشكوى يُسجَّل في <b>سجل الاطلاع</b> (من فتحها ومتى)، ويمكنك عرضه من صفحة الشكوى.</li>
+      <li>من ليس مخولاً لا يرى الشكوى إطلاقاً، ولا يطّلع مسؤول النظام على محتواها.</li>
+      <li>الشكاوى لا تُحذف، ومحتواها لا يدخل في أي إشعار أو سجل تدقيق عام.</li>
+    </ul></div>
+</section>
+
+<!-- ============ P17 INCIDENTS ============ -->
+<section class="break" id="p17">
+  <div class="screen-head"><div class="num">17</div><div><h3>بلاغات الأعطال</h3><div class="where">التواصل والمتابعة</div></div></div>
+  <p class="lead">بلاغ العطل يُرفع عندما يتعطل جهاز أو مادة أو مرفق. يصل أولاً للمدير المباشر، وقد يحوّله إلى الموارد البشرية.</p>
+  <h4>التبويبات</h4>
+  <ul><li><b>الوارد:</b> البلاغات الواصلة إليك.</li><li><b>بلاغاتي:</b> البلاغات التي رفعتها.</li></ul>
+  <h4>معالجة بلاغ وارد</h4>
+  <ol class="steps">
+    <li>افتح البلاغ: الصنف المتعطل (إن حُدد) ووصف العطل وصاحبه.</li>
+    <li>غيّر حالته إلى <span class="pill y">قيد المعالجة</span> عند البدء، ثم <span class="pill g">تم الحل</span> عند الانتهاء. صاحب البلاغ يُشعَر بكل تغيير.</li>
+  </ol>
+  <h4>رفع بلاغ جديد</h4>
+  <ol class="steps"><li>اضغط <b>بلاغ جديد</b>.</li><li>اختر <b>الصنف المتعطل</b> (اختياري) واكتب <b>وصف العطل</b>، ثم أرسل.</li></ol>
+</section>
+
+<!-- ============ P18 EVALUATIONS ============ -->
+<section class="break" id="p18">
+  <div class="screen-head"><div class="num">18</div><div><h3>التقييمات</h3><div class="where">التواصل والمتابعة</div></div></div>
+  <p class="lead">التقييمات الشهرية التي يرفعها مديرو الأقسام لموظفيهم. دورك متابعة الشركة كلها والبت في اعتراضات الموظفين.</p>
+  <h4>تبويب «تقييمات الشركة»</h4>
+  <ul>
+    <li>يعرض <b>دورة التقييم</b> الحالية (مفتوحة / مغلقة / مجدولة) ومهلتها، وتقييمات كل الموظفين.</li>
+    <li>حالة كل تقييم: <span class="pill">مسودة</span> <span class="pill b">مرفوع</span> <span class="pill g">اطّلع عليه الموظف</span> <span class="pill y">اعتراض قيد البت</span> <span class="pill g">اعتراض مقبول</span> <span class="pill r">اعتراض مرفوض</span>.</li>
+    <li>مرشحات: <b>الاعتراض</b> (بلا اعتراض / قيد البت)، و<b>المتأخرة</b>.</li>
+    <li>عند فتح تقييم: الدرجات لكل معيار، ملاحظات المدير للموظف، <b>بيانات الحضور للفترة</b> (أيام الدوام، مرات التأخر)، <b>ردود الموظف</b> (تعليق أو اعتراض)، و<b>الملاحظات الداخلية</b>.</li>
+    <li><b>الملخص السنوي</b> لكل موظف: عدد الأشهر المقيّمة، والاطلاع، والاعتراضات.</li>
+  </ul>
+  <h4>البت في اعتراض</h4>
+  <ol class="steps">
+    <li>افتح التقييم الذي عليه <span class="pill y">اعتراض قيد البت</span> (يصلك أيضاً في «بانتظار إجرائي»).</li>
+    <li>اقرأ اعتراض الموظف ودرجات المدير وبيانات الحضور.</li>
+    <li>اضغط <b>قبول</b> أو <b>رفض</b>، واكتب <b>السبب</b> (يظهر للموظف ومديره).</li>
+  </ol>
+  <div class="note lock"><div class="h">خصوصية</div>الملاحظات الداخلية للتقييم لا تظهر للموظف أبداً، لا في الشاشة ولا في تصدير ولا إشعار.</div>
+</section>
+
+<!-- ============ P19 APPRECIATION ============ -->
+<section class="break" id="p19">
+  <div class="screen-head"><div class="num">19</div><div><h3>كتب الشكر</h3><div class="where">التواصل والمتابعة</div></div></div>
+  <p class="lead">كتب الشكر والتقدير التي يصدرها المدير التنفيذي للموظفين.</p>
+  <ul>
+    <li><b>كل الكتب:</b> كل كتب الشكر في الشركة مع الموظف والعنوان والتاريخ وحالة الاستلام (<span class="pill g">مستلم</span> / <span class="pill y">بانتظار الاستلام</span>)، ويمكن تنزيل ملف الكتاب.</li>
+    <li><b>كتبي:</b> الكتب الموجهة إليك؛ اضغط <b>تأكيد الاستلام</b>.</li>
+    <li>تظهر الكتب أيضاً في ملف كل موظف، تبويب «كتب الشكر».</li>
+  </ul>
+  <div class="note rule"><div class="h">من يصدر الكتاب؟</div>إصدار كتاب الشكر من صلاحية المدير التنفيذي. دورك الاطلاع والمتابعة.</div>
+</section>
+
+<!-- ============ P20 WARNINGS ============ -->
+<section class="break" id="p20">
+  <div class="screen-head"><div class="num">20</div><div><h3>الإنذارات</h3><div class="where">التواصل والمتابعة <span class="pill g">من اختصاصك</span></div></div></div>
+  <p class="lead">دورة الإنذار الكاملة: توصية من مدير القسم، قرارك، إبلاغ الموظف، رده، واعتراضه.</p>
+  <h4>دورة الإنذار</h4>
+  <div class="flow"><span class="s">توصية المدير</span><span class="ar">←</span><span class="s a">قرار الموارد البشرية</span><span class="ar">←</span><span class="s a">إبلاغ الموظف</span><span class="ar">←</span><span class="s">ردّ الموظف (3 أيام دوام)</span><span class="ar">←</span><span class="s">صدر الإنذار</span><span class="ar">←</span><span class="s">اعتراض (اختياري)</span></div>
+  <h4>الحالات</h4>
+  <p><span class="pill y">توصية</span> <span class="pill b">أُبلغ الموظف</span> <span class="pill b">ردّ الموظف</span> <span class="pill">انتهت مهلة الرد</span> <span class="pill r">صدر الإنذار</span> <span class="pill">حُفظت</span>
+     <span class="pill y">معترض عليه</span> <span class="pill r">ثُبّت بعد الاعتراض</span> <span class="pill g">أُلغي بعد الاعتراض</span></p>
+  <p>والمستوى: <span class="pill y">إنذار أول</span> أو <span class="pill r">إنذار نهائي</span>.</p>
+  <h4>كيف تتعامل مع توصية</h4>
+  <ol class="steps">
+    <li>من تبويب <b>كل الإنذارات</b> (مرشح «قيد البت فقط») افتح التوصية: الموظف، <b>تاريخ الواقعة</b>، <b>وصف الواقعة</b>، <b>المستوى الموصى به</b>، و<b>صاحب التوصية</b>.</li>
+    <li>إذا رأيت أنها تستحق، اضغط <b>إبلاغ الموظف</b> (أو «تسجيل الواقعة وإبلاغ الموظف»). تبدأ مهلة رد مدتها <b>3 أيام دوام</b>.</li>
+    <li>بعد رد الموظف أو انتهاء المهلة، اضغط <b>إصدار القرار</b>: <b>إصدار الإنذار</b> بالمستوى المناسب، أو <b>حفظ</b> (إغلاق دون إنذار)، مع <b>ملاحظة القرار</b>.</li>
+  </ol>
+  <div class="note rule"><div class="h">الاعتراض</div>للموظف حق الرد مرة واحدة والاعتراض مرة واحدة. البت في الاعتراض يكون نهائياً بـ <b>تثبيت الإنذار</b> أو <b>إلغاء الإنذار</b>،
+    ويتابعه المدير التنفيذي. لا يصل للموظف أي شيء من التوصية قبل مراجعتك.</div>
+</section>
+
+<!-- ============ P21 EMPLOYEES ============ -->
+<section class="break" id="p21">
+  <div class="screen-head"><div class="num">21</div><div><h3>الموظفون وملف الموظف</h3><div class="where">الإدارة والموظفون <span class="pill g">من اختصاصك</span></div></div></div>
+  <p class="lead">سجل كل موظفي الشركة: البحث، إضافة موظف جديد مع حسابه، وإدارة ملف كل موظف بالكامل.</p>
+  <h4>قائمة الموظفين</h4>
+  <ul><li>بحث بالاسم، ولكل موظف: القسم، المسمى، وشارة <span class="pill y">بدون حساب</span> إذا لم يُنشأ له حساب دخول.</li></ul>
+
+  <h4>إضافة موظف</h4>
+  <ol class="steps">
+    <li>اضغط <b>إضافة موظف</b>.</li>
+    <li><b>البيانات الشخصية:</b> الاسم الكامل بالعربية، الاسم بالإنجليزية، البريد الإلكتروني، الهاتف، الجنس، تاريخ الميلاد، العنوان.</li>
+    <li><b>العمل:</b> القسم، المسمى الوظيفي، تاريخ المباشرة، المدير المباشر، فترة العمل، و<b>الراتب المتفق عليه</b> (اختياري؛ يصل للمحاسب كأول راتب من تاريخ المباشرة، ولا يظهر هنا بعد الحفظ).</li>
+    <li><b>الحساب والأدوار:</b> اسم المستخدم (3 أحرف على الأقل) والأدوار (يضيف النظام دور الموظف دائماً).</li>
+    <li>اضغط <b>إنشاء الموظف والحساب</b>. تصل لصاحب الحساب كلمة سر مؤقتة يغيرها عند أول دخول.</li>
+  </ol>
+  <div class="note rule"><div class="h">قواعد ربط المدير</div>
+    مدير القسم هو مدير الموظف، و<b>الموارد البشرية</b> مديرة مدير القسم، و<b>المدير التنفيذي</b> مدير الموارد البشرية والمحاسب ومسؤول المخزن،
+    والمراجع يرتبط بالمدير التنفيذي أو بمدير الموارد البشرية. المدير التنفيذي ومسؤول النظام بلا مدير ولا فترة عمل، ومدير الموارد البشرية والمحاسب ومسؤول المخزن بلا فترة عمل.
+    النظام يقترح عليك فقط المديرين الصالحين حسب هذه القواعد.</div>
+
+  <h4>ملف الموظف (عند الضغط على أي موظف)</h4>
+  <table>
+    <tr><th style="width:22%">التبويب</th><th>المحتوى والإجراءات</th></tr>
+    <tr><td><b>البيانات</b></td><td>بيانات الملف كاملة. الإجراءات: <b>تعديل</b> البيانات، <b>تصحيح تاريخ المباشرة</b>، <b>تغيير المدير</b> (مع سجل المديرين السابقين؛ وتنتقل العناصر المعلقة للمدير الجديد)، <b>تعيين موظفين له</b> إذا كان مديراً،
+      <b>تعيين فترة عمل</b> مع سجل الفترات، و<b>الحساب</b>: إنشاء حساب إن لم يوجد، أو حالة الحساب والتحقق بخطوتين وزر <b>إدارة الحساب</b>.</td></tr>
+    <tr><td><b>الوثائق</b></td><td><b>رفع وثيقة</b> بنوعها (هوية، جواز، عقد، شهادة، طبية، أخرى) ودرجتها (<b>عادية</b> أو <b>حساسة</b>). كل ملف يُفحص من الفيروسات قبل إتاحته:
+      <span class="pill y">قيد الفحص</span> <span class="pill g">سليمة</span> <span class="pill r">مصابة</span>. ثم <b>تنزيل</b> أو <b>حذف</b>.</td></tr>
+    <tr><td><b>سجل المهام</b></td><td>المهام الإدارية التي نفّذها هذا الشخص في النظام (إذا كان مديراً أو معتمداً).</td></tr>
+    <tr><td><b>السجلات</b></td><td>تبويبات فرعية: <b>التقييمات</b> (ومنها تقييمات الموارد الخاصة التي لا يراها الموظف، وزر «إضافة تقييم»)، <b>العقود</b>، <b>الإنذارات</b>، <b>كتب الشكر</b>، <b>العهد</b>،
+      و<b>الشكاوى</b> (التي قدمها الموظف ويسمح لك بها نطاقك فقط، وكل فتح يُسجَّل).</td></tr>
+  </table>
+</section>
+
+<!-- ============ P22 TEAM ============ -->
+<section class="break" id="p22">
+  <div class="screen-head"><div class="num">22</div><div><h3>فريقي</h3><div class="where">الإدارة والموظفون</div></div></div>
+  <p class="lead">الأشخاص المرتبطون بك مباشرة كمدير: مديرو الأقسام، والمراجع إن كان مرتبطاً بك.</p>
+  <ul>
+    <li>تبويب <b>الموظفون</b>: قائمة فريقك مع البحث بالاسم. اضغط أي شخص لترى <b>البيانات</b> و<b>الوثائق</b> و<b>رصيد الإجازات</b>.</li>
+    <li>تبويب <b>سجل مهامي الإدارية</b>: كل ما نفذته أنت من موافقات وإجراءات إدارية، كسجل شخصي.</li>
+  </ul>
+  <div class="note tip"><div class="h">متى أستخدم «فريقي» بدل «الموظفون»؟</div>«الموظفون» لكل الشركة وإدارة الملفات. «فريقي» نظرة سريعة على من يرفعون طلباتهم ومطالعاتهم إليك مباشرة.</div>
+</section>
+
+<!-- ============ P23 ATTENDANCE ADMIN ============ -->
+<section class="break" id="p23">
+  <div class="screen-head"><div class="num">23</div><div><h3>حضور الموظفين</h3><div class="where">الإدارة والموظفون</div></div></div>
+  <p class="lead">حضور أي موظف في الشركة يوماً بيوم، كما حسبه النظام من البصمات والدوام والإجازات والعطل.</p>
+  <h4>كيف تستخدمها</h4>
+  <ol class="steps">
+    <li>اختر <b>الموظف</b> (أو اتركه فارغاً للكل) والشهر أو الفترة.</li>
+    <li>تظهر الأيام مع حالة كل يوم وأرقامه: الدخول، الخروج، التأخر، ساعات العمل، الإضافي، وعلامة <b>مصحح</b> إن صُحح.</li>
+    <li>اضغط على يوم لفتح <b>تفاصيل يوم الحضور</b>: الدوام المجدول، الدخول الأصلي، الخروج الأصلي، الإجازة الزمنية، <b>العمليات الخام</b> (كل بصمة كما وصلت من الجهاز)، و<b>سجل التصحيح</b>.</li>
+  </ol>
+  <h4>حالات اليوم</h4>
+  <p><span class="pill g">حاضر</span> <span class="pill y">متأخر</span> <span class="pill y">ناقص</span> <span class="pill r">غائب</span> <span class="pill b">إجازة</span> <span class="pill b">عطلة رسمية</span> <span class="pill">عطلة أسبوعية</span> <span class="pill">بدون فترة عمل</span></p>
+  <div class="note rule"><div class="h">لا يوجد تسجيل حضور يدوي</div>
+    الحضور يأتي فقط من أجهزة البصمة أو الاستيراد. الغياب ليس شيئاً يُدخل؛ يحسبه النظام لكل يوم دوام بلا بصمة ولا إجازة.
+    إذا نسي الموظف البصمة يقدّم <b>طلب تصحيح بصمة</b> يمر بمسار الموافقة، وعند اعتماده يُعاد حساب اليوم.</div>
+</section>
+
+<!-- ============ P24 DEPARTMENTS ============ -->
+<section class="break" id="p24">
+  <div class="screen-head"><div class="num">24</div><div><h3>الأقسام</h3><div class="where">الإدارة والموظفون <span class="pill g">من اختصاصك</span></div></div></div>
+  <p class="lead">الهيكل التنظيمي للشركة: إنشاء الأقسام وتعديلها وحذفها.</p>
+  <ol class="steps">
+    <li>القائمة تعرض كل قسم مع عدد موظفيه، ويمكن البحث.</li>
+    <li><b>قسم جديد:</b> اكتب الاسم بالعربية والاسم بالإنجليزية واحفظ.</li>
+    <li><b>تعديل</b> لتغيير الاسم، و<b>حذف</b> لحذف القسم.</li>
+  </ol>
+  <div class="note warn"><div class="h">انتبه</div>لا يُحذف قسم فيه موظفون أو عليه عهدة مشتركة؛ انقل الموظفين إلى قسم آخر أولاً من ملف كل موظف، وتُرجع العهدة المشتركة عند مسؤول المخزن. مدير القسم يُحدد بإعطاء الشخص دور «مدير القسم» وربط موظفي القسم به.</div>
+</section>
+
+<!-- ============ P25 SHIFTS ============ -->
+<section class="break" id="p25">
+  <div class="screen-head"><div class="num">25</div><div><h3>قوالب الدوام</h3><div class="where">الإدارة والموظفون <span class="pill g">من اختصاصك</span></div></div></div>
+  <p class="lead">قالب الدوام يحدد أيام وساعات عمل الموظف، وعليه يحسب النظام التأخر والغياب والإضافي.</p>
+  <h4>إنشاء قالب</h4>
+  <ol class="steps">
+    <li>اضغط <b>قالب جديد</b> واكتب الاسم بالعربية والإنجليزية.</li>
+    <li>اختر <b>النوع</b>: <b>ثابت</b> (نفس الأيام كل أسبوع)، <b>متناوب</b> (دورة تتكرر كل عدد من الأيام، من 2 إلى 366)، أو <b>ليلي</b>.</li>
+    <li>في <b>أيام الدوام</b> اضغط <b>إضافة يوم</b> لكل يوم عمل: اليوم (أو «يوم الدورة» للمتناوب)، ووقت البداية والنهاية، وعلّم <b>تعبر منتصف الليل</b> إذا انتهت الفترة في اليوم التالي.</li>
+    <li><b>دقائق السماح بالتأخير</b> (من 0 إلى 240): التأخر داخلها لا يُحسب.</li>
+    <li><b>العمل الإضافي:</b> لا يُحسب، أو بعد نهاية فترة العمل، أو بعد عدد ساعات يومية (وتحدد بعد كم ساعة).</li>
+    <li>احفظ. القائمة تعرض لكل قالب السماح وعدد الموظفين عليه وحالته (<span class="pill g">مفعّل</span> / <span class="pill">معطّل</span>).</li>
+  </ol>
+  <div class="note tip"><div class="h">تعيين القالب للموظف</div>يتم من ملف الموظف ← <b>تعيين فترة عمل</b>، مع تاريخ البداية. ويبقى سجل الفترات السابقة.</div>
+</section>
+
+<!-- ============ P26 DEVICES ============ -->
+<section class="break" id="p26">
+  <div class="screen-head"><div class="num">26</div><div><h3>أجهزة البصمة</h3><div class="where">الإدارة والموظفون</div></div></div>
+  <p class="lead">أجهزة البصمة المربوطة بالنظام، وأهم عمل لك فيها: <b>ربط رقم المستخدم في الجهاز بالموظف</b> حتى تُحسب بصماته.</p>
+  <h4>ماذا تحتوي</h4>
+  <ul><li>قائمة الأجهزة: الاسم، الرقم التسلسلي، <b>آخر اتصال</b>، والحالة (<span class="pill g">مفعّل</span> / <span class="pill">معطّل</span>).</li>
+      <li>عند فتح الجهاز تبويبان: <b>المستخدمون المربوطون</b> و<b>غير المربوطين</b> (أرقام بصمت على الجهاز ولا يعرف النظام صاحبها).</li></ul>
+  <h4>ربط مستخدم الجهاز بموظف</h4>
+  <ol class="steps">
+    <li>افتح الجهاز وانتقل إلى <b>غير المربوطين</b>.</li>
+    <li>اضغط <b>ربط</b> بجانب الرقم، واختر الموظف (أو أدخل <b>رقم المستخدم في الجهاز</b> يدوياً).</li>
+    <li>تظهر «تم الربط، ويعاد حساب أيام الموظف في الخلفية»؛ تُحتسب بصماته السابقة تلقائياً.</li>
+    <li>لإلغاء ربط خاطئ اضغط <b>حذف الربط</b>.</li>
+  </ol>
+  <div class="note rule"><div class="h">من يسجل الأجهزة؟</div>تسجيل جهاز جديد وإصدار مفتاحه من عمل <b>مسؤول النظام</b>. عندما تظهر «كل مستخدمي الجهاز مربوطون» فكل البصمات تُحسب.</div>
+</section>
+
+<!-- ============ P27 IMPORT ============ -->
+<section class="break" id="p27">
+  <div class="screen-head"><div class="num">27</div><div><h3>استيراد الحضور</h3><div class="where">الإدارة والموظفون <span class="pill g">من اختصاصك</span></div></div></div>
+  <p class="lead">إدخال بصمات من ملف Excel أو CSV، مثلاً لجهاز غير متصل بالشبكة أو لفترة انقطاع.</p>
+  <h4>كيف تستورد</h4>
+  <ol class="steps">
+    <li>اضغط <b>استيراد</b> واختر <b>الجهاز الذي جاءت منه البيانات</b>.</li>
+    <li>اختر ملف <span class="en">xlsx</span> أو <span class="en">csv</span>. يجب أن يحتوي الصف الأول على العمودين الإلزاميين:
+      <span class="en">deviceUserId</span> (رقم المستخدم في الجهاز) و<span class="en">punchDateTime</span> (وقت البصمة).</li>
+    <li>اضغط <b>رفع</b>. تظهر «استُلم الملف وتُعالج صفوفه في الخلفية».</li>
+    <li>تابع النتيجة في القائمة: عدد <b>الصفوف</b>، <b>مقبولة</b>، <b>مكررة</b>، <b>بدون ربط</b>، <b>أخطاء</b>.</li>
+  </ol>
+  <h4>حالات الاستيراد</h4>
+  <p><span class="pill">بالانتظار</span> <span class="pill b">قيد المعالجة</span> <span class="pill g">مكتمل</span> <span class="pill y">مكتمل مع أخطاء</span> <span class="pill r">فشل</span></p>
+  <div class="note tip"><div class="h">صفوف «بدون ربط»</div>تعني أن رقم المستخدم غير مربوط بموظف. اربطه من صفحة أجهزة البصمة (26) ثم يُعاد الحساب. الصفوف المكررة لا تُحسب مرتين.</div>
+</section>
+
+<!-- ============ P28 ACCOUNTS ============ -->
+<section class="break" id="p28">
+  <div class="screen-head"><div class="num">28</div><div><h3>الحسابات</h3><div class="where">الإدارة والموظفون</div></div></div>
+  <p class="lead">حسابات الدخول للمستخدمين: حالتها، أدوارها، وإرسال رابط إعادة تعيين كلمة السر.</p>
+  <h4>قائمة الحسابات</h4>
+  <p>بحث باسم المستخدم أو الموظف، ولكل حساب: الأدوار والحالة <span class="pill g">فعال</span> <span class="pill">موقوف</span> <span class="pill r">مقفل مؤقتاً</span> <span class="pill y">بانتظار التحقق بخطوتين</span>.</p>
+  <h4>تفاصيل الحساب والإجراءات</h4>
+  <table>
+    <tr><th style="width:30%">الإجراء</th><th>متى وكيف</th></tr>
+    <tr><td><b>تعديل الأدوار</b></td><td>أضف أو احذف أدوار المستخدم (مدير قسم، مراجع، محاسب...). إذا تغيّر بسبب الدور الجديد من يصلح مديراً له، اختر <b>المدير الجديد</b>.</td></tr>
+    <tr><td><b>إرسال رابط إعادة تعيين كلمة السر</b></td><td>عندما ينسى المستخدم كلمة السر أو يُقفل حسابه. يُرسل الرابط إلى بريده مع موعد انتهائه، ويرفع القفل المؤقت.</td></tr>
+    <tr><td><b>ملف الموظف</b></td><td>رابط مباشر لملف الموظف صاحب الحساب.</td></tr>
+  </table>
+  <div class="note rule"><div class="h">ملاحظات</div>
+    <ul style="margin:0">
+      <li>«موقوف» يعني أن الموظف موقوف أو انتهت خدمته؛ لا يستطيع الدخول.</li>
+      <li>الحساب يُقفل مؤقتاً بعد محاولات دخول خاطئة متكررة، ويُرفع بإعادة تعيين كلمة السر.</li>
+      <li>إعادة ضبط التحقق بخطوتين وتعديل الصلاحيات المباشرة من عمل مسؤول النظام.</li>
+      <li>دورا «الموارد البشرية» و«المدير التنفيذي» لا يُعطيان إلا لشخص واحد في الشركة.</li>
+    </ul></div>
+</section>
+
+<!-- ============ P29 HR EVALUATIONS ============ -->
+<section class="break" id="p29">
+  <div class="screen-head"><div class="num">29</div><div><h3>تقييم الموظفين</h3><div class="where">التقييم والأداء <span class="pill r">لا يراه الموظف</span></div></div></div>
+  <p class="lead">تقييم خاص بالموارد البشرية للموظفين، منفصل عن تقييم المدير الشهري. يذهب إلى المدير التنفيذي ولا يراه الموظف.</p>
+  <h4>إضافة تقييم</h4>
+  <ol class="steps">
+    <li>اضغط <b>تقييم جديد</b> واختر الموظف (أو من ملف الموظف ← التقييمات ← إضافة تقييم).</li>
+    <li>أعطِ <b>الدرجة من 1 إلى 10</b> لكل عنوان من عناوين التقييم، واكتب <b>الملاحظات</b>.</li>
+    <li>اضغط <b>حفظ التقييم</b>. لا يُعدّل التقييم بعد الحفظ.</li>
+  </ol>
+  <div class="note warn"><div class="h">قبل البدء</div>إذا ظهرت «أضف عناوين التقييم أولاً»، أنشئ العناوين من صفحة «عناوين تقييم الموارد» (30).</div>
+  <h4>الإرسال إلى المدير التنفيذي</h4>
+  <ul>
+    <li>القائمة تعرض التقييمات مع <b>المعدل</b> والحالة <span class="pill y">لم يُرسل</span> أو <span class="pill g">أُرسل للتنفيذي</span>، ومرشح <b>غير المرسلة</b>.</li>
+    <li><b>إرسال تقييم واحد:</b> افتحه واضغط <b>إرسال التقييم</b> ثم «نعم، أرسل».</li>
+    <li><b>إرسال تقييمات الأسبوع:</b> زر <b>إرسال للمدير التنفيذي</b> يجمع كل التقييمات غير المرسلة في <b>تقرير واحد</b> مع ملاحظة اختيارية.</li>
+  </ul>
+</section>
+
+<!-- ============ P30 CRITERIA ============ -->
+<section class="break" id="p30">
+  <div class="screen-head"><div class="num">30</div><div><h3>عناوين تقييم الموارد</h3><div class="where">التقييم والأداء</div></div></div>
+  <p class="lead">المعايير التي تقيّم عليها الموظفين في صفحة «تقييم الموظفين»، مثل «السلوك المهني» أو «الالتزام بالدوام».</p>
+  <ol class="steps">
+    <li>اضغط <b>عنوان جديد</b>.</li>
+    <li>اكتب <b>الاسم بالعربي</b> و<b>الاسم بالإنجليزي</b> و<b>الترتيب</b> (موضعه في نموذج التقييم).</li>
+    <li>علّم <b>فعّال</b> ليظهر في التقييمات الجديدة، واحفظ.</li>
+    <li>للتعديل اضغط على العنوان. العنوان <span class="pill">معطّل</span> لا يظهر في التقييمات الجديدة، وتبقى التقييمات القديمة كما هي.</li>
+  </ol>
+  <div class="note tip"><div class="h">نصيحة</div>بدل حذف عنوان لم تعد تستخدمه، عطّله؛ بذلك تبقى التقييمات السابقة كاملة وقابلة للمقارنة.</div>
+</section>
+
+<!-- ============ P31 ALERTS ============ -->
+<section class="break" id="p31">
+  <div class="screen-head"><div class="num">31</div><div><h3>تنبيهات التقييم</h3><div class="where">التقييم والأداء</div></div></div>
+  <p class="lead">إنذار مبكر تلقائي: الموظفون الذين انخفض معدلهم في أحد العناوين عن الحد المطلوب خلال الدورة.</p>
+  <h4>كيف يعمل</h4>
+  <p>في نهاية كل دورة يجمع النظام درجات كل عنوان لكل موظف ويقسمها على عدد تقييماته. إذا كان المعدل <b>مساوياً للحد أو أقل</b> يصلك تنبيه.
+    الحد وطول الدورة وأقل عدد تقييمات تُضبط من «إعدادات النظام ← تنبيه معدل التقييم» (37).</p>
+  <h4>ماذا تحتوي</h4>
+  <ul>
+    <li>قائمة التنبيهات، لكل تنبيه: الموظف، <b>العنوان</b>، المعدل، <b>الحد المطلوب</b>، والفترة. مثال: «لديه تقييم أقل من المطلوب في (الالتزام بالدوام)».</li>
+    <li>زر <b>فتح ملف الموظف</b> لمراجعة تقييماته وحضوره واتخاذ الإجراء المناسب.</li>
+  </ul>
+</section>
+
+<!-- ============ P32 REPORTS ============ -->
+<section class="break" id="p32">
+  <div class="screen-head"><div class="num">32</div><div><h3>تقارير تقييم الموارد</h3><div class="where">التقييم والأداء</div></div></div>
+  <p class="lead">أرشيف التقارير التي أرسلتها إلى المدير التنفيذي من صفحة «تقييم الموظفين».</p>
+  <ul>
+    <li>لكل تقرير: <b>الفترة</b>، <b>عدد التقييمات</b>، تاريخ الإرسال، والملاحظة.</li>
+    <li>افتح التقرير لترى التقييمات التي ضمّها بدرجاتها ومعدلاتها.</li>
+  </ul>
+  <div class="note tip"><div class="h">فائدة</div>استخدمها لمتابعة ما وصل للإدارة العليا ومتى، والرجوع إليه عند أي نقاش لاحق.</div>
+</section>
+
+<!-- ============ P33 COMPLAINT HANDLERS ============ -->
+<section class="break" id="p33">
+  <div class="screen-head"><div class="num">33</div><div><h3>معالجو الشكاوى</h3><div class="where">التقييم والأداء</div></div></div>
+  <p class="lead">تعيين أشخاص إضافيين لمعالجة الشكاوى (مثلاً لجنة تحقيق)، بموافقة المدير التنفيذي.</p>
+  <h4>طلب تعيين معالج</h4>
+  <ol class="steps">
+    <li>اضغط <b>طلب تعيين</b>.</li>
+    <li>اختر <b>المستخدم</b> والفترة: من تاريخ، و<b>إلى</b> (اتركه فارغاً ليبقى حتى السحب).</li>
+    <li>أرسل الطلب. يظهر بحالة <span class="pill y">بانتظار موافقة المدير التنفيذي</span>، ثم <span class="pill g">معتمد</span> أو <span class="pill r">مرفوض</span>.</li>
+    <li>لإنهاء التعيين اضغط <b>سحب التعيين</b>؛ تصبح الحالة <span class="pill">مسحوب</span>.</li>
+  </ol>
+  <div class="note lock"><div class="h">قاعدة</div>مسؤول النظام لا يكون معالجاً للشكاوى، وكل تعيين يحتاج موافقة المدير التنفيذي.</div>
+</section>
+
+<!-- ============ P34 FINANCE ============ -->
+<section class="break" id="p34">
+  <div class="screen-head"><div class="num">34</div><div><h3>المالية (كشوف الرواتب)</h3><div class="where">المالية والتقارير</div></div></div>
+  <p class="lead">يعدّ المحاسب كشف الرواتب الشهري، ثم يطلب اعتماده. دورك مراجعة الكشف واعتماده أو إعادته للمحاسب.</p>
+  <h4>دورة الكشف</h4>
+  <div class="flow"><span class="s">المحاسب يعدّ الكشف</span><span class="ar">←</span><span class="s">طلب الاعتماد</span><span class="ar">←</span><span class="s a">اعتماد الكشف (أنت)</span><span class="ar">←</span><span class="s">الإغلاق النهائي (المحاسب)</span><span class="ar">←</span><span class="s">القسائم للموظفين</span></div>
+  <h4>ماذا تحتوي</h4>
+  <ul>
+    <li>قائمة <b>كشوف الرواتب</b> بالشهر والحالة: <span class="pill y">بانتظار الاعتماد</span> <span class="pill y">يحتاج إعادة حساب</span> <span class="pill g">اعتمده</span> <span class="pill">أُغلق</span>.</li>
+    <li>عند فتح الكشف: من أعدّه، آخر حساب، وجدول الموظفين: <b>الإجمالي</b>، <b>الإضافات</b>، <b>الاستقطاعات</b>، <b>الصافي</b>، وحالة التسليم.</li>
+    <li>تنبيهات مهمة إن وجدت: «موظفون بلا بيانات مالية (خارج الكشف)»، أو «N اقتراح حضور لم يُراجع ولا يدخل الكشف».</li>
+  </ul>
+  <h4>المراجعة والاعتماد</h4>
+  <ol class="steps">
+    <li>افتح الكشف الذي حالته «بانتظار الاعتماد» (يصلك إشعار به).</li>
+    <li>راجع الأرقام والتنبيهات. يمكنك <b>تصدير</b> الكشف للمراجعة خارج النظام.</li>
+    <li>اضغط <b>اعتماد</b>: تثبت حركات الفترة ولا تقبل حركات جديدة.</li>
+    <li>أو اضغط <b>إعادة للمحاسب</b> مع ملاحظة إذا وجدت خطأ.</li>
+  </ol>
+  <div class="note rule"><div class="h">حدود صلاحيتك</div>إعداد الكشف، والبيانات المالية للموظفين، والإضافات والاستقطاعات، والمصروفات والنثريات، والإغلاق النهائي، كلها لدى المحاسب.</div>
+</section>
+
+<!-- ============ P35 DEPT REPORTS ============ -->
+<section class="break" id="p35">
+  <div class="screen-head"><div class="num">35</div><div><h3>التقارير الشهرية</h3><div class="where">المالية والتقارير</div></div></div>
+  <p class="lead">التقرير الشهري الذي يرفعه كل مدير قسم عن قسمه، تتابع منه التزام الأقسام.</p>
+  <h4>ماذا تحتوي</h4>
+  <ul>
+    <li>قائمة تقارير الأقسام للشهر مع حالة كل قسم: <span class="pill g">منجز</span> <span class="pill b">جارٍ</span> <span class="pill r">متأخر</span>، وحالة التقرير <span class="pill">مسودة</span> / <span class="pill g">مرفوع</span>، ومرشح <b>المتأخرة</b>.</li>
+    <li>عند فتح التقرير، ملخص القسم للشهر:
+      <ul>
+        <li><b>التقييمات:</b> المرفوعة، والاطلاع، والاعتراضات المعلقة.</li>
+        <li><b>العهدة:</b> العهد غير المؤكدة وآخر جرد.</li>
+        <li><b>التعاميم:</b> نسبة التأكيد.</li>
+        <li><b>الحضور:</b> مرات التأخر ودقائقه.</li>
+        <li><b>طلبات معلقة</b>، و<b>ملاحظات المدير</b>.</li>
+      </ul></li>
+  </ul>
+  <div class="note tip"><div class="h">مواعيد الرفع</div>تُفتح نهاية الشهر في وقت محدد ولمدير القسم مهلة رفع بأيام العمل، مع تذكير وتصعيد تلقائي، كلها مضبوطة في الإعدادات. التقرير لا يتعدل بعد رفعه.</div>
+</section>
+
+<!-- ============ P36 REPORTS ============ -->
+<section class="break" id="p36">
+  <div class="screen-head"><div class="num">36</div><div><h3>التقارير</h3><div class="where">المالية والتقارير</div></div></div>
+  <p class="lead">تقارير على مستوى الشركة كلها، تختار فيها الفترة والمرشحات وتعرضها كجدول أو رسم، وتصدّرها.</p>
+  <table>
+    <tr><th style="width:28%">التقرير</th><th>ماذا يعرض</th></tr>
+    <tr><td><b>حضور الشركة</b></td><td>لكل موظف خلال الفترة: أيام الدوام، أيام الحضور، مرات التأخر ودقائقه، أيام الغياب، أيام الإجازة.</td></tr>
+    <tr><td><b>أرصدة الإجازات</b></td><td>لكل موظف: رصيد بداية السنة، المستخدم بالفترة (أيام)، الساعات الزمنية المستخدمة، والمتبقي.</td></tr>
+    <tr><td><b>طلبات الشركة</b></td><td>كل الطلبات في الفترة بالنوع والحالة وتاريخ الإغلاق.</td></tr>
+    <tr><td><b>العقود</b></td><td>العقود مرتبة حسب تاريخ الانتهاء، لمعرفة ما يقترب انتهاؤه.</td></tr>
+    <tr><td><b>الإنذارات</b></td><td>الإنذارات بالموظف والمستوى وتاريخ الواقعة والحالة.</td></tr>
+  </table>
+  <h4>كيف تستخدمها</h4>
+  <ol class="steps">
+    <li>اختر التقرير من القائمة.</li>
+    <li>حدد الفترة (من/إلى) وأي مرشح متاح (قسم، موظف...).</li>
+    <li>اعرض النتيجة، وبدّل بين <b>عرض كجدول</b> و<b>عرض كرسم</b>.</li>
+    <li>اضغط <b>تصدير</b> لتنزيل التقرير كملف.</li>
+  </ol>
+</section>
+
+<!-- ============ P37 SETTINGS ============ -->
+<section class="break" id="p37">
+  <div class="screen-head"><div class="num">37</div><div><h3>إعدادات النظام</h3><div class="where">النظام</div></div></div>
+  <p class="lead">الإعدادات العامة للشركة. بعضها تعدّله أنت مباشرة من هذه الصفحة، وبعضها له صفحته الخاصة، وبعضها من اختصاص مسؤول النظام فتراه للقراءة فقط.</p>
+
+  <h4>1. الإجازة السنوية <span class="pill g">تعدّلها أنت</span></h4>
+  <ul>
+    <li><b>أيام الإجازة السنوية لكل موظف:</b> تُفتح سنة كل موظف جديد بهذا العدد من تاريخ مباشرته.</li>
+    <li>عند تغييره يأخذ كل موظف العدد الجديد <b>من بداية سنته القادمة</b>، ولا تتغير السنة الحالية.</li>
+    <li>لتصحيح رصيد شخص واحد استخدم «تعديل الرصيد» في صفحة أرصدة الإجازات (8).</li>
+  </ul>
+
+  <h4>2. تنبيه معدل التقييم <span class="pill g">تعدّله أنت</span></h4>
+  <table>
+    <tr><th style="width:40%">الحقل</th><th>المعنى</th></tr>
+    <tr><td>التنبيه إذا كان المعدل هذا الرقم أو أقل</td><td>الحد الذي يُطلق التنبيه (من 1 إلى 10).</td></tr>
+    <tr><td>طول الدورة بالأسابيع</td><td>الفترة التي يُحسب عليها المعدل.</td></tr>
+    <tr><td>أقل عدد تقييمات في الدورة</td><td>لا يُحسب تنبيه لموظف قيّمته مرات أقل من هذا العدد.</td></tr>
+  </table>
+  <p class="small">التغيير يبدأ من الدورة القادمة. التنبيهات تظهر في صفحة «تنبيهات التقييم» (31).</p>
+
+  <h4>كيف تعدّل إعداداً</h4>
+  <ol class="steps"><li>غيّر القيمة في البطاقة.</li><li>اضغط <b>حفظ</b>؛ تظهر «تم الحفظ» مع وقت آخر تعديل. إذا عدّله غيرك في الوقت نفسه ستطلب منك الرسالة إعادة التحميل.</li></ol>
+
+  <h4>3. كل الأقسام</h4>
+  <p>قائمة بكل أقسام الإعدادات، لكل قسم <b>الجهة المالكة</b> وشارة <span class="pill g">قابل للتعديل</span> أو <span class="pill">قراءة</span>. الضغط على القسم يفتح صفحته.</p>
+  <table>
+    <tr><th>القسم</th><th style="width:22%">المالك</th><th>أين تُدار</th></tr>
+    <tr><td>أرصدة الإجازات</td><td><b>الموارد البشرية</b></td><td>صفحة 8</td></tr>
+    <tr><td>الدوامات</td><td><b>الموارد البشرية</b></td><td>صفحة 25</td></tr>
+    <tr><td>العطل</td><td><b>الموارد البشرية</b></td><td>صفحة 9</td></tr>
+    <tr><td>الأقسام وربط المدراء</td><td><b>الموارد البشرية</b></td><td>صفحة 24 وملف الموظف</td></tr>
+    <tr><td>الإجازة السنوية</td><td><b>الموارد البشرية</b></td><td>هذه الصفحة</td></tr>
+    <tr><td>تنبيه معدل التقييم</td><td><b>الموارد البشرية</b></td><td>هذه الصفحة</td></tr>
+    <tr><td>التذكيرات والتصعيد</td><td>مسؤول النظام</td><td>للقراءة</td></tr>
+    <tr><td>تنبيهات العقود</td><td>مسؤول النظام</td><td>للقراءة</td></tr>
+    <tr><td>مهل الشكاوى</td><td>مسؤول النظام</td><td>للقراءة</td></tr>
+    <tr><td>إعدادات الحضور</td><td>مسؤول النظام</td><td>للقراءة</td></tr>
+    <tr><td>الإجازة الزمنية</td><td>مسؤول النظام</td><td>للقراءة</td></tr>
+    <tr><td>المالية</td><td>مسؤول النظام</td><td>للقراءة</td></tr>
+    <tr><td>الأدوار والصلاحيات</td><td>مسؤول النظام</td><td>للقراءة</td></tr>
+    <tr><td>أنواع الطلبات</td><td>مسؤول النظام</td><td>للقراءة</td></tr>
+    <tr><td>أنواع الإجازات الأخرى</td><td>مسؤول النظام</td><td>للقراءة</td></tr>
+    <tr><td>أجهزة البصمة</td><td>مسؤول النظام</td><td>صفحة 26 (الربط لك)</td></tr>
+  </table>
+</section>
+
+<!-- ============ APPENDIX: STATUSES ============ -->
+<section class="break" id="ap1">
+  <div class="chapter-head"><div class="k">هـ</div><h2>الحالات ومعانيها</h2><p>مرجع سريع لأهم الحالات التي تظهر في الشارات.</p></div>
+  <table>
+    <tr><th style="width:22%">المجال</th><th>الحالات</th></tr>
+    <tr><td><b>الطلبات</b></td><td>بانتظار المدير · بانتظار الموارد البشرية · بانتظار المدير التنفيذي · بانتظار جهة التنفيذ · موافق عليه · مكتمل · مرفوض · ملغى</td></tr>
+    <tr><td><b>أثر الإجازة على الرصيد</b></td><td>بدون أثر · محجوز (عند التقديم) · مخصوم (عند الاعتماد) · مفكوك (عند الرفض أو الإلغاء)</td></tr>
+    <tr><td><b>أنواع الإجازة</b></td><td>زمنية (بالساعات، ضمن حصة شهرية) · اعتيادية من الرصيد · نوع آخر (مثل الأمومة، مدفوعة أو غير مدفوعة، وقد تتطلب مرفقاً)</td></tr>
+    <tr><td><b>يوم الحضور</b></td><td>حاضر · متأخر · ناقص (بصمة واحدة) · غائب · إجازة · عطلة رسمية · عطلة أسبوعية · بدون فترة عمل</td></tr>
+    <tr><td><b>الشكاوى</b></td><td>المستوى: عادية · سرية · سرية للغاية — المكان: عند مدير القسم · عند الموارد البشرية · عند المدير التنفيذي · مغلقة</td></tr>
+    <tr><td><b>التقييم الشهري</b></td><td>مسودة · مرفوع · اطّلع عليه الموظف · اعتراض قيد البت · اعتراض مقبول · اعتراض مرفوض</td></tr>
+    <tr><td><b>العقود</b></td><td>ساري · قاربت على الانتهاء · بانتظار التوصية · بانتظار القرار · القرار متأخر · جُدّد · لم يُجدّد · منتهي</td></tr>
+    <tr><td><b>الإنذارات</b></td><td>توصية · أُبلغ الموظف · ردّ الموظف · انتهت مهلة الرد · صدر الإنذار · حُفظت · معترض عليه · ثُبّت بعد الاعتراض · أُلغي بعد الاعتراض</td></tr>
+    <tr><td><b>العهد</b></td><td>بانتظار تأكيد الاستلام · مستلمة · مُرجعة — الجرد: مطابق · يوجد فرق</td></tr>
+    <tr><td><b>كشف الرواتب</b></td><td>مسودة · يحتاج إعادة حساب · بانتظار الاعتماد · معتمد · مغلق</td></tr>
+    <tr><td><b>التفويض</b></td><td>مجدول · ساري · منتهي · ملغى</td></tr>
+    <tr><td><b>الحسابات</b></td><td>فعال · موقوف · مقفل مؤقتاً · بانتظار التحقق بخطوتين</td></tr>
+    <tr><td><b>الوثائق</b></td><td>قيد الفحص · سليمة · مصابة</td></tr>
+    <tr><td><b>الاستيراد</b></td><td>بالانتظار · قيد المعالجة · مكتمل · مكتمل مع أخطاء · فشل</td></tr>
+  </table>
+</section>
+
+<!-- ============ APPENDIX: OUT OF SCOPE ============ -->
+<section class="break" id="ap2">
+  <div class="chapter-head"><div class="k">و</div><h2>ما هو خارج صلاحيتك ولمن تتوجه</h2><p>حتى تعرف من المسؤول عن كل شيء لا تجده في قائمتك.</p></div>
+  <table>
+    <tr><th>المهمة</th><th style="width:28%">المسؤول</th></tr>
+    <tr><td>الأدوار والصلاحيات، وتعديل صلاحيات مستخدم مباشرة</td><td>مسؤول النظام</td></tr>
+    <tr><td>تسجيل أجهزة البصمة وإصدار مفاتيحها</td><td>مسؤول النظام</td></tr>
+    <tr><td>أنواع الطلبات، وأنواع الإجازات الأخرى، وإعدادات الحضور، والإجازة الزمنية</td><td>مسؤول النظام</td></tr>
+    <tr><td>مواعيد التذكير والتصعيد، ومهل الشكاوى، وتنبيهات العقود، وإعدادات المالية</td><td>مسؤول النظام</td></tr>
+    <tr><td>إعادة ضبط التحقق بخطوتين لمستخدم</td><td>مسؤول النظام</td></tr>
+    <tr><td>إعادة تعيين كلمة سرك أنت، وقرار طلباتك وإجازاتك</td><td>المدير التنفيذي</td></tr>
+    <tr><td>إصدار كتب الشكر، والموافقة على معالجي الشكاوى</td><td>المدير التنفيذي</td></tr>
+    <tr><td>إعداد كشف الرواتب، والبيانات المالية، والمصروفات، والنثريات، والإغلاق النهائي</td><td>المحاسب</td></tr>
+    <tr><td>الأصناف، وصرف المخزن، وتسليم العهد وإرجاعها</td><td>مسؤول المخزن</td></tr>
+    <tr><td>التقييم الشهري للموظفين، والتقرير الشهري للقسم، وتوصيات الإنذار، وجرد العهد المشتركة</td><td>مدير القسم</td></tr>
+    <tr><td>التقرير اليومي وغرف المراجعة</td><td>المراجع</td></tr>
+  </table>
+  <div class="note lock"><div class="h">قواعد الخصوصية التي لا تتجاوزها أي إعدادات</div>
+    <ul style="margin:0">
+      <li>البيانات المالية لا تظهر لمدير القسم ولا لمسؤول المخزن.</li>
+      <li>مسؤول المخزن يرى الموظف بالاسم والقسم فقط.</li>
+      <li>الملاحظات الداخلية للتقييم وتقييمات الموارد لا تظهر للموظف.</li>
+      <li>الشكاوى لا تظهر إلا لمعالجها المخول، وكل اطلاع مسجل.</li>
+      <li>لا يعتمد أحد طلبه الشخصي.</li>
+    </ul></div>
+</section>
+
+<!-- ============ APPENDIX: FAQ ============ -->
+<section class="break" id="ap3">
+  <div class="chapter-head"><div class="k">ز</div><h2>أسئلة شائعة</h2><p>مواقف تتكرر في العمل اليومي وكيف تتعامل معها.</p></div>
+  <table>
+    <tr><th style="width:38%">السؤال</th><th>الجواب</th></tr>
+    <tr><td>موظف جديد باشر اليوم، ماذا أفعل؟</td><td>«الموظفون ← إضافة موظف» واملأ البيانات والقسم والمدير وفترة العمل والحساب. ثم اربط رقمه في جهاز البصمة من «أجهزة البصمة ← غير المربوطين».</td></tr>
+    <tr><td>موظف يقول إنه بصم ولم يُحسب حضوره.</td><td>افتح «حضور الموظفين ← تفاصيل اليوم ← العمليات الخام». إذا لم تظهر بصمة، تأكد أن رقمه مربوط في الجهاز. إذا ربطته الآن يُعاد حساب أيامه تلقائياً.</td></tr>
+    <tr><td>موظف نسي أن يبصم.</td><td>يقدّم «طلب تصحيح بصمة» من حسابه، فيمر على مديره ثم عليك. عند الاعتماد يُصحح اليوم.</td></tr>
+    <tr><td>اعتُمدت إجازة بالخطأ.</td><td>«أرصدة الإجازات ← اختر الموظف ← الإجازات ← تصحيح إجازة معتمدة». تعود الأيام ويُلغى الطلب.</td></tr>
+    <tr><td>نريد إضافة يومين لرصيد موظف كمكافأة.</td><td>«أرصدة الإجازات ← تعديل الرصيد» واكتب 2 مع السبب.</td></tr>
+    <tr><td>موظف انتقل إلى قسم آخر.</td><td>من ملفه: «تعديل» لتغيير القسم، ثم «تغيير المدير» لمدير القسم الجديد. العناصر المعلقة تنتقل تلقائياً.</td></tr>
+    <tr><td>سأسافر أسبوعاً، من يوافق على الطلبات؟</td><td>«التفويض ← تفويض جديد» واختر المفوَّض والفترة والنطاق. الشكاوى والمالية والتقييم لا تُفوَّض.</td></tr>
+    <tr><td>مدير قسم في إجازة ولم يفوّض أحداً.</td><td>أنشئ تفويضاً نيابة عنه: «تفويض جديد ← عن المعتمد الغائب».</td></tr>
+    <tr><td>موظف نسي كلمة السر أو قُفل حسابه.</td><td>«الحسابات ← افتح الحساب ← إرسال رابط إعادة تعيين كلمة السر».</td></tr>
+    <tr><td>ظهرت رسالة «تغيرت البيانات منذ فتحها».</td><td>عدّل شخص آخر السجل نفسه قبلك. أعد تحميل الصفحة ثم كرر التعديل.</td></tr>
+    <tr><td>عندنا عطلة رسمية 3 أيام.</td><td>«العطل ← عطلة جديدة» ثلاث مرات، سجل لكل يوم.</td></tr>
+    <tr><td>هل أستطيع حذف تعميم أرسلته بالخطأ؟</td><td>لا. التعاميم والتبليغات لا تُعدّل ولا تُحذف بعد الإرسال. أرسل تعميماً جديداً يوضح التصحيح.</td></tr>
+  </table>
+  <p class="small" style="margin-top:14px;text-align:center">— نهاية الدليل —</p>
+</section>
+
+</body>
+</html>

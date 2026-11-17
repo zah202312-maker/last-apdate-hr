@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>سلم المخزن</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1c2430;
+    --muted: #5b6676;
+    --line: #dfe4ea;
+    --bg: #ffffff;
+    --soft: #f5f7fa;
+    --brand: #1f6f78;
+    --brand-soft: #e3f1f2;
+    --warn: #a45b00;
+    --warn-soft: #fff3e0;
+    --bad: #b42318;
+    --bad-soft: #fdecea;
+    --good: #1e7a3c;
+    --good-soft: #e7f5ec;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--ink); }
+  body {
+    font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif;
+    font-size: 15px;
+    line-height: 1.75;
+    padding: 28px 16px 40px;
+  }
+  .page { max-width: 820px; margin: 0 auto; }
+  h1 { font-size: 30px; margin: 0 0 4px; font-weight: 800; }
+  h2 {
+    font-size: 21px; margin: 34px 0 6px; font-weight: 800;
+    padding-bottom: 6px; border-bottom: 2px solid var(--brand);
+  }
+  .sub { color: var(--muted); margin: 0 0 18px; }
+  p { margin: 6px 0; }
+  b { font-weight: 700; }
+  .en { direction: ltr; unicode-bidi: isolate; font-family: Consolas, 'Segoe UI', monospace; font-size: 0.92em; }
+
+  /* staircase */
+  .stairs {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    align-items: end;
+    gap: 6px;
+    margin: 18px 0 8px;
+    height: 260px;
+  }
+  .stair {
+    background: var(--brand);
+    color: #fff;
+    border-radius: 8px 8px 0 0;
+    padding: 8px 6px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    text-align: center;
+    font-size: 12.5px;
+    line-height: 1.45;
+    font-weight: 600;
+  }
+  .stair .n {
+    display: block; font-size: 22px; font-weight: 800; line-height: 1.1; margin-bottom: 2px;
+  }
+  .stair:nth-child(1) { height: 26%; opacity: .72; }
+  .stair:nth-child(2) { height: 36%; opacity: .76; }
+  .stair:nth-child(3) { height: 46%; opacity: .80; }
+  .stair:nth-child(4) { height: 56%; opacity: .85; }
+  .stair:nth-child(5) { height: 68%; opacity: .90; }
+  .stair:nth-child(6) { height: 82%; opacity: .95; }
+  .stair:nth-child(7) { height: 100%; background: var(--good); }
+  .stairs-note { color: var(--muted); font-size: 13px; text-align: center; margin-bottom: 8px; }
+
+  /* step cards */
+  .step {
+    display: grid;
+    grid-template-columns: 52px minmax(0, 1fr);
+    gap: 14px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin: 12px 0;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .badge {
+    width: 46px; height: 46px; border-radius: 50%;
+    background: var(--brand); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; font-weight: 800;
+  }
+  .step h3 { margin: 0 0 2px; font-size: 18px; font-weight: 800; }
+  .where { color: var(--brand); font-weight: 700; font-size: 13.5px; }
+  .why { color: var(--muted); font-size: 14px; }
+  table { width: 100%; border-collapse: collapse; margin: 8px 0 4px; font-size: 14px; }
+  th, td { border: 1px solid var(--line); padding: 6px 8px; text-align: right; vertical-align: top; }
+  th { background: var(--soft); font-weight: 700; }
+  td.req { color: var(--bad); font-weight: 700; white-space: nowrap; }
+  td.opt { color: var(--muted); white-space: nowrap; }
+  .example {
+    background: var(--brand-soft); border-radius: 8px; padding: 6px 10px; margin-top: 8px; font-size: 14px;
+  }
+  .example table { background: #fff; margin: 6px 0 2px; }
+  .example th { background: #f0f6f7; }
+  .ex-h { font-weight: 800; color: var(--brand); }
+  .num { direction: ltr; unicode-bidi: isolate; font-weight: 700; }
+  .plus { color: var(--good); font-weight: 800; direction: ltr; unicode-bidi: isolate; }
+  .minus { color: var(--bad); font-weight: 800; direction: ltr; unicode-bidi: isolate; }
+  .warn {
+    background: var(--warn-soft); border-right: 4px solid var(--warn); border-radius: 6px;
+    padding: 6px 10px; margin-top: 8px; font-size: 14px;
+  }
+  ol, ul { margin: 6px 0; padding-right: 22px; }
+  li { margin: 2px 0; }
+
+  /* flow chips */
+  .flow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 8px 0; }
+  .chip {
+    background: var(--soft); border: 1px solid var(--line); border-radius: 999px;
+    padding: 2px 12px; font-size: 13.5px; font-weight: 600;
+  }
+  .chip.key { background: var(--brand); border-color: var(--brand); color: #fff; }
+  .arrow { color: var(--muted); font-weight: 800; }
+
+  .box {
+    border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; margin: 12px 0;
+    break-inside: avoid; page-break-inside: avoid;
+  }
+  .box h3 { margin: 0 0 4px; font-size: 17px; font-weight: 800; }
+
+  .rules { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+  .rule {
+    background: var(--bad-soft); border-radius: 10px; padding: 10px 12px; font-size: 14px;
+    break-inside: avoid; page-break-inside: avoid;
+  }
+  .rule b { color: var(--bad); }
+
+  .footer { margin-top: 30px; color: var(--muted); font-size: 12.5px; text-align: center; }
+
+  @media (max-width: 640px) {
+    .stairs { height: 220px; gap: 3px; }
+    .stair { font-size: 10px; padding: 6px 1px; overflow-wrap: anywhere; }
+    .stair .n { font-size: 16px; }
+    .step { grid-template-columns: minmax(0, 1fr); }
+    .rules { grid-template-columns: 1fr; }
+    table { display: block; overflow-x: auto; }
+  }
+  @page { size: A4; margin: 14mm 12mm; }
+  @media print {
+    body { padding: 0; font-size: 13.5px; }
+    h2 { break-after: avoid; page-break-after: avoid; }
+    .newpage { break-before: page; page-break-before: always; }
+    .stair, .badge, .chip.key, .example, .warn, .rule, th {
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1>سلّم المخزن</h1>
+  <p class="sub">دليل مختصر لمسؤول المخزن: ماذا تُدخل أولاً، وماذا بعده، وما المعلومات المطلوبة في كل خطوة.</p>
+
+  <p><b>الفكرة:</b> المخزن يُبنى مثل السلّم، درجة فوق درجة. لا تستطيع صعود درجة قبل التي تحتها؛ النظام نفسه يمنعك. مثلاً: لا تُنشأ مادة بدون تصنيف ووحدة قياس.</p>
+  <p>كل العمل من القائمة الجانبية: <b>المخزن</b>، ثم التبويب المذكور في كل خطوة. العهد لها صفحة مستقلة في القائمة اسمها <b>العهد</b>.</p>
+
+  <div class="stairs" aria-label="درجات تجهيز المخزن">
+    <div class="stair"><span class="n">1</span>التصنيفات</div>
+    <div class="stair"><span class="n">2</span>وحدات القياس</div>
+    <div class="stair"><span class="n">3</span>المواد</div>
+    <div class="stair"><span class="n">4</span>الفرق</div>
+    <div class="stair"><span class="n">5</span>الرصيد الموجود</div>
+    <div class="stair"><span class="n">6</span>العهد القديمة</div>
+    <div class="stair"><span class="n">7</span>تحقق وابدأ العمل</div>
+  </div>
+  <p class="stairs-note">ابدأ من الدرجة 1. هذه الدرجات تُعمل مرة واحدة عند تجهيز المخزن، وبعدها يبدأ العمل اليومي.</p>
+
+  <h2>الجزء الأول: تجهيز المخزن أول مرة</h2>
+
+  <div class="step">
+    <div class="badge">1</div>
+    <div>
+      <h3>التصنيفات</h3>
+      <div class="where">المخزن ← التصنيفات والوحدات ← تصنيف جديد</div>
+      <p class="why">التصنيف هو المجموعة التي تنتمي إليها المادة. يسهّل البحث والتقارير.</p>
+      <table>
+        <tr><th>الحقل</th><th>مطلوب؟</th><th>ملاحظة</th></tr>
+        <tr><td>الاسم بالعربية</td><td class="req">مطلوب</td><td></td></tr>
+        <tr><td>الاسم بالإنجليزية</td><td class="req">مطلوب</td><td></td></tr>
+      </table>
+      <div class="example"><span class="ex-h">مثال: هكذا تملأ النافذة</span>
+        <table>
+          <tr><th>الاسم بالعربية</th><th>الاسم بالإنجليزية</th></tr>
+          <tr><td>قرطاسية</td><td class="en">Stationery</td></tr>
+          <tr><td>أجهزة إلكترونية</td><td class="en">Electronics</td></tr>
+          <tr><td>أثاث</td><td class="en">Furniture</td></tr>
+          <tr><td>مواد تنظيف</td><td class="en">Cleaning supplies</td></tr>
+        </table>
+        كل سطر = تصنيف واحد. اضغط «تصنيف جديد» لكل واحد.</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="badge">2</div>
+    <div>
+      <h3>وحدات القياس</h3>
+      <div class="where">المخزن ← التصنيفات والوحدات ← وحدة جديدة</div>
+      <p class="why">الوحدة هي طريقة عدّ المادة.</p>
+      <table>
+        <tr><th>الحقل</th><th>مطلوب؟</th><th>ملاحظة</th></tr>
+        <tr><td>الاسم بالعربية</td><td class="req">مطلوب</td><td></td></tr>
+        <tr><td>الاسم بالإنجليزية</td><td class="req">مطلوب</td><td></td></tr>
+      </table>
+      <div class="example"><span class="ex-h">مثال: هكذا تملأ النافذة</span>
+        <table>
+          <tr><th>الاسم بالعربية</th><th>الاسم بالإنجليزية</th><th>تُستعمل لـ</th></tr>
+          <tr><td>قطعة</td><td class="en">Piece</td><td>حاسوب، كرسي، طابعة</td></tr>
+          <tr><td>رزمة</td><td class="en">Ream</td><td>ورق الطباعة</td></tr>
+          <tr><td>علبة</td><td class="en">Box</td><td>حبر، أقلام، دبابيس</td></tr>
+          <tr><td>لتر</td><td class="en">Liter</td><td>سائل تنظيف</td></tr>
+        </table></div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="badge">3</div>
+    <div>
+      <h3>المواد</h3>
+      <div class="where">المخزن ← المواد ← مادة جديدة</div>
+      <p class="why">كل صنف تخزنه. المادة الجديدة تبدأ برصيد <b>صفر</b>، والرصيد يدخل في الدرجة 5.</p>
+      <table>
+        <tr><th>الحقل</th><th>مطلوب؟</th><th>ملاحظة</th></tr>
+        <tr><td>رمز المادة (SKU)</td><td class="req">مطلوب</td><td>رمز فريد، حتى 32 حرفاً.</td></tr>
+        <tr><td>الاسم بالعربية</td><td class="req">مطلوب</td><td>حتى 128 حرفاً.</td></tr>
+        <tr><td>الاسم بالإنجليزية</td><td class="req">مطلوب</td><td>حتى 128 حرفاً.</td></tr>
+        <tr><td>النوع</td><td class="req">مطلوب</td><td><b>مستهلك</b>: يُصرف ولا يرجع (ورق، حبر).<br><b>يُسترد (عهدة)</b>: يُسلَّم ويرجع (حاسوب، أداة).</td></tr>
+        <tr><td>التصنيف</td><td class="req">مطلوب</td><td>من الدرجة 1.</td></tr>
+        <tr><td>وحدة القياس</td><td class="req">مطلوب</td><td>من الدرجة 2.</td></tr>
+        <tr><td>الحد الأدنى للمخزون</td><td class="req">مطلوب</td><td>عنده ينبّهك النظام أن المادة قاربت النفاد. اكتب 0 إذا لا تريد تنبيهاً.</td></tr>
+      </table>
+      <div class="example"><span class="ex-h">مثال: ثلاث مواد كما تُكتب في النظام</span>
+        <table>
+          <tr><th>الرمز</th><th>الاسم بالعربية</th><th>الاسم بالإنجليزية</th><th>النوع</th><th>التصنيف</th><th>الوحدة</th><th>الحد الأدنى</th></tr>
+          <tr><td class="en">ST-001</td><td>ورق A4</td><td class="en">A4 Paper</td><td>مستهلك</td><td>قرطاسية</td><td>رزمة</td><td class="num">10</td></tr>
+          <tr><td class="en">ST-002</td><td>حبر طابعة أسود</td><td class="en">Black Toner</td><td>مستهلك</td><td>قرطاسية</td><td>علبة</td><td class="num">3</td></tr>
+          <tr><td class="en">PC-001</td><td>حاسوب محمول</td><td class="en">Laptop</td><td>يُسترد (عهدة)</td><td>أجهزة إلكترونية</td><td>قطعة</td><td class="num">2</td></tr>
+        </table>
+        <b>لماذا؟</b> الورق والحبر يُستهلكان ولا يرجعان، فهما «مستهلك». الحاسوب يبقى عند الموظف ثم يرجع، فهو «يُسترد».<br>
+        <b>الحد الأدنى 10 للورق</b> يعني: إذا نزل الورق إلى 10 رزم أو أقل، يظهر «منخفض المخزون» حتى تشتري.</div>
+      <div class="warn"><b>انتبه:</b> اختر النوع بدقة. <b>النوع لا يتغير بعد أول حركة</b> على المادة. الحاسوب إذا سُجّل «مستهلك» لن يصير عهدة عند صرفه.</div>
+      <div class="example"><b>نصيحة:</b> رموز منظمة تسهّل البحث: <span class="en">PC-</span> للحواسيب، <span class="en">ST-</span> للقرطاسية، <span class="en">FR-</span> للأثاث.</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="badge">4</div>
+    <div>
+      <h3>الفرق</h3>
+      <div class="where">المخزن ← الفرق ← فريق جديد</div>
+      <p class="why">الفريق هو الجهة التي تستلم المواد في «سند الصرف».</p>
+      <table>
+        <tr><th>الحقل</th><th>مطلوب؟</th><th>ملاحظة</th></tr>
+        <tr><td>اسم الفريق</td><td class="req">مطلوب</td><td></td></tr>
+        <tr><td>القسم</td><td class="opt">اختياري</td><td>إذا ربطته بقسم، المواد المستردة التي تُصرف له تصير <b>عهدة مشتركة</b> على ذلك القسم.</td></tr>
+      </table>
+      <div class="example"><span class="ex-h">مثال</span>
+        <table>
+          <tr><th>اسم الفريق</th><th>القسم</th><th>النتيجة</th></tr>
+          <tr><td>فريق الصيانة</td><td>قسم الخدمات</td><td>الحاسوب المصروف له يصير عهدة مشتركة على قسم الخدمات، ومدير القسم يجردها.</td></tr>
+          <tr><td>الاستقبال</td><td>(فارغ)</td><td>يستلم مواد عادية، بدون عهدة مشتركة على قسم.</td></tr>
+        </table></div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="badge">5</div>
+    <div>
+      <h3>الرصيد الموجود فعلاً في المخزن</h3>
+      <p class="why">أدخل الكميات الموجودة الآن على الرفوف. عندك طريقتان:</p>
+
+      <p><b>أ) عندك وصولات شراء:</b> <span class="where">المخزن ← المشتريات ← عملية شراء جديدة</span></p>
+      <table>
+        <tr><th>الحقل</th><th>مطلوب؟</th><th>ملاحظة</th></tr>
+        <tr><td>رقم الوصل</td><td class="req">مطلوب</td><td>حتى 64 حرفاً.</td></tr>
+        <tr><td>المورد أو جهة الشراء</td><td class="req">مطلوب</td><td></td></tr>
+        <tr><td>تاريخ الشراء وتاريخ الاستلام</td><td class="req">مطلوب</td><td>لا يكونان في المستقبل، والاستلام لا يسبق الشراء.</td></tr>
+        <tr><td>المواد: المادة + الكمية + سعر الوحدة</td><td class="req">مطلوب</td><td>سطر لكل مادة. زر «إضافة مادة» لسطر جديد. المجموع يُحسب تلقائياً.</td></tr>
+        <tr><td>ملاحظة</td><td class="opt">اختياري</td><td></td></tr>
+        <tr><td>صورة أو PDF الوصل</td><td class="opt">اختياري</td><td>مستحسن جداً.</td></tr>
+      </table>
+      <div class="flow">
+        <span class="chip">حفظ كمسودة</span><span class="arrow">←</span>
+        <span class="chip">مراجعة الكميات والأسعار</span><span class="arrow">←</span>
+        <span class="chip key">اعتماد</span><span class="arrow">←</span>
+        <span class="chip">المواد تدخل المخزن، ويصل المبلغ للمحاسب كمصروف</span>
+      </div>
+      <div class="example"><span class="ex-h">مثال: وصل شراء من مكتبة</span>
+        <table>
+          <tr><th>رقم الوصل</th><td class="num">1045</td><th>المورد</th><td>مكتبة النور</td></tr>
+          <tr><th>تاريخ الشراء</th><td class="num">2026-11-10</td><th>تاريخ الاستلام</th><td class="num">2026-11-11</td></tr>
+        </table>
+        <table>
+          <tr><th>المادة</th><th>الكمية</th><th>سعر الوحدة</th><th>المجموع (تلقائي)</th></tr>
+          <tr><td>ST-001 ورق A4</td><td class="num">50</td><td class="num">6,000</td><td class="num">300,000</td></tr>
+          <tr><td>PC-001 حاسوب محمول</td><td class="num">3</td><td class="num">750,000</td><td class="num">2,250,000</td></tr>
+          <tr><th colspan="3">المبلغ الإجمالي للوصل</th><th class="num">2,550,000</th></tr>
+        </table>
+        بعد «اعتماد»: رصيد الورق يزيد 50، ورصيد الحاسوب يزيد 3، والمحاسب يرى مصروفاً بمبلغ 2,550,000 دينار.</div>
+
+      <p><b>ب) لا يوجد وصل</b> (رصيد قديم أو هدية): <span class="where">المخزن ← المواد ← زر «إدخال» تحت المادة</span></p>
+      <table>
+        <tr><th>الحقل</th><th>مطلوب؟</th><th>ملاحظة</th></tr>
+        <tr><td>الكمية</td><td class="req">مطلوب</td><td>رقم موجب.</td></tr>
+        <tr><td>إجمالي التكلفة</td><td class="opt">اختياري</td><td>إذا كتبتها يصل مصروف للمحاسب ويتحدث سعر المادة. اتركها فارغة للرصيد القديم.</td></tr>
+        <tr><td>ملاحظة</td><td class="opt">اختياري</td><td>اكتب المصدر، مثل «رصيد افتتاحي».</td></tr>
+      </table>
+      <div class="example"><span class="ex-h">مثال:</span> عدّيت الرف ولقيت 20 رزمة ورق قديمة بلا وصل.<br>
+        «المواد» ← سطر ورق A4 ← «إدخال» ← الكمية: <span class="num">20</span> ← إجمالي التكلفة: (فارغ) ← ملاحظة: «رصيد افتتاحي قبل النظام» ← حفظ.</div>
+      <div class="warn"><b>انتبه:</b> المخزون <b>لا يتغير</b> بالمسودة. يتغير فقط عند الضغط على <b>اعتماد</b>. وبعد الاعتماد لا يُعدَّل الوصل.</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="badge">6</div>
+    <div>
+      <h3>العهد الموجودة عند الموظفين من قبل</h3>
+      <div class="where">القائمة ← العهد ← عهدة جديدة</div>
+      <p class="why">أشياء مسلَّمة للموظفين قبل النظام، مثل حاسوب عند موظف.</p>
+      <table>
+        <tr><th>الحقل</th><th>مطلوب؟</th><th>ملاحظة</th></tr>
+        <tr><td>الصنف (المادة)</td><td class="req">مطلوب</td><td></td></tr>
+        <tr><td>الموظف <b>أو</b> القسم</td><td class="req">مطلوب</td><td>الموظف = عهدة شخصية. القسم = عهدة مشتركة.</td></tr>
+        <tr><td>الكمية</td><td class="req">مطلوب</td><td></td></tr>
+        <tr><td>خصم من رصيد المخزن</td><td class="req">مهم</td><td><b>أطفئه هنا</b>، لأن المادة عند الموظف أصلاً وليست على الرف.</td></tr>
+        <tr><td>ملاحظة</td><td class="opt">اختياري</td><td></td></tr>
+      </table>
+      <p class="why">بعد الحفظ يصل للموظف إشعار ليؤكد أنه استلمها.</p>
+      <div class="example"><span class="ex-h">مثال:</span> أحمد من قسم المحاسبة عنده حاسوب من السنة الماضية.
+        <table>
+          <tr><th>الصنف</th><th>الموظف</th><th>الكمية</th><th>خصم من رصيد المخزن</th><th>ملاحظة</th></tr>
+          <tr><td>PC-001 حاسوب محمول</td><td>أحمد (المحاسبة)</td><td class="num">1</td><td><b>مطفأ</b></td><td>مسلَّم قبل النظام</td></tr>
+        </table>
+        لو تركته مفعّلاً، النظام يخصم حاسوباً من الرف وهو أصلاً ليس على الرف، فيصير الرصيد خطأ.</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="badge" style="background:var(--good)">7</div>
+    <div>
+      <h3>تحقق وابدأ العمل</h3>
+      <div class="where">المخزن ← لوحة التحكم</div>
+      <p>تأكد أن <b>عدد المواد</b> و<b>إجمالي قيمة المخزون</b> منطقيان، وأن «منخفضة المخزون» تعرض المواد الصحيحة. إذا كل شيء سليم، المخزن جاهز للعمل اليومي.</p>
+      <div class="example"><span class="ex-h">مثال:</span> بعد الأمثلة أعلاه يجب أن ترى: عدد المواد <span class="num">3</span>، والورق رصيده <span class="num">70</span> (20 قديم + 50 شراء)، والحاسوب <span class="num">3</span>، والحبر <span class="num">0</span> ويظهر «نفد المخزون». إذا رأيت رقماً آخر، راجع «حركة المخزون».</div>
+    </div>
+  </div>
+
+  <h2 class="newpage">الجزء الثاني: العمل اليومي</h2>
+  <p>بعد التجهيز، كل يوم أنت تفعل واحداً من هذه:</p>
+
+  <div class="box">
+    <h3>1. دخول مواد جديدة (شراء)</h3>
+    <div class="where">المخزن ← المشتريات</div>
+    <div class="flow">
+      <span class="chip">عملية شراء جديدة</span><span class="arrow">←</span>
+      <span class="chip">حفظ كمسودة</span><span class="arrow">←</span>
+      <span class="chip key">اعتماد</span>
+    </div>
+    <p>نفس حقول الدرجة 5 (أ).</p>
+    <div class="example"><span class="ex-h">مثال:</span> وصلت كراسي جديدة. أولاً تأكد أن مادة «كرسي مكتب» موجودة في «المواد» (إن لم تكن، أضفها: <span class="en">FR-001</span>، يُسترد، أثاث، قطعة). ثم وصل جديد: رقم <span class="num">1102</span>، المورد «معرض الأثاث الحديث»، 10 كراسي × 95,000 = 950,000، أرفق صورة الوصل، حفظ كمسودة، راجع، اعتماد.</div>
+  </div>
+
+  <div class="box">
+    <h3>2. صرف مواد لفريق أو قسم (بمبادرة منك)</h3>
+    <div class="where">المخزن ← صرف المواد ← صرف مواد</div>
+    <table>
+      <tr><th>الحقل</th><th>مطلوب؟</th><th>ملاحظة</th></tr>
+      <tr><td>رقم سند الصرف</td><td class="req">مطلوب</td><td></td></tr>
+      <tr><td>تاريخ الصرف</td><td class="req">مطلوب</td><td>لا يكون في المستقبل.</td></tr>
+      <tr><td>الفريق أو القسم المستلم</td><td class="req">مطلوب</td><td>من الدرجة 4.</td></tr>
+      <tr><td>الموظف المستلم</td><td class="opt">اختياري</td><td>الشخص الذي استلم فعلاً.</td></tr>
+      <tr><td>المواد: المادة + الكمية</td><td class="req">مطلوب</td><td>لا تستطيع صرف أكثر من المتوفر.</td></tr>
+      <tr><td>ملاحظة ومستند الصرف</td><td class="opt">اختياري</td><td>مثل صورة السند الموقّع.</td></tr>
+    </table>
+    <div class="flow">
+      <span class="chip">حفظ كمسودة</span><span class="arrow">←</span>
+      <span class="chip key">اعتماد</span><span class="arrow">←</span>
+      <span class="chip">تُخصم الكمية، والمواد المستردة تصير عهدة تلقائياً</span>
+    </div>
+    <div class="example"><span class="ex-h">مثال: تجهيز فريق الصيانة</span>
+      <table>
+        <tr><th>رقم السند</th><td class="num">S-031</td><th>التاريخ</th><td class="num">2026-11-12</td></tr>
+        <tr><th>الفريق</th><td>فريق الصيانة</td><th>الموظف المستلم</th><td>علي (الخدمات)</td></tr>
+      </table>
+      <table>
+        <tr><th>المادة</th><th>الكمية</th><th>المتوفر قبل الصرف</th><th>ماذا يحدث بعد الاعتماد</th></tr>
+        <tr><td>ST-001 ورق A4</td><td class="num">5</td><td class="num">70</td><td>الرصيد يصير 65. انتهى، لأنه مستهلك.</td></tr>
+        <tr><td>PC-001 حاسوب محمول</td><td class="num">1</td><td class="num">3</td><td>الرصيد يصير 2، والحاسوب يصير <b>عهدة شخصية</b> على علي لأنك حددته مستلماً. لو تركت الموظف فارغاً، يصير عهدة مشتركة على قسم الخدمات.</td></tr>
+      </table>
+      لو كتبت 80 رزمة ورق والمتوفر 70، النظام لا يقبل.</div>
+  </div>
+
+  <div class="box">
+    <h3>3. طلب مادة من موظف</h3>
+    <div class="where">المخزن ← طلبات الصرف</div>
+    <p>الموظف يطلب من «طلباتي»، والطلب يصلك بعد موافقة مديره ثم الموارد البشرية.</p>
+    <p><b>إذا المادة متوفرة:</b></p>
+    <div class="flow">
+      <span class="chip">اطلعت</span><span class="arrow">←</span>
+      <span class="chip key">تسليم</span><span class="arrow">←</span>
+      <span class="chip">سُلّم</span>
+    </div>
+    <p><b>إذا المادة غير متوفرة:</b></p>
+    <div class="flow">
+      <span class="chip">اطلعت</span><span class="arrow">←</span>
+      <span class="chip">بانتظار الشراء</span><span class="arrow">←</span>
+      <span class="chip">إدخال المشتريات (التكلفة مطلوبة هنا)</span><span class="arrow">←</span>
+      <span class="chip key">تسليم</span>
+    </div>
+    <ul>
+      <li>الكمية تُخصم عند <b>التسليم</b> فقط، لا عند «اطلعت».</li>
+      <li>إذا المادة تُسترد، تختار عند التسليم: <b>عهدة شخصية</b> للموظف أو <b>عهدة القسم</b>.</li>
+      <li>إذا تعذّر التنفيذ نهائياً: «بانتظار إجرائي» ← افتح الطلب ← <b>رفض</b> مع السبب.</li>
+    </ul>
+    <div class="example"><span class="ex-h">مثال 1 (متوفرة):</span> سارة من قسم الموارد البشرية طلبت 2 رزمة ورق. الرصيد 65.<br>
+      اضغط «اطلعت» ← «تسليم» ← الورق مستهلك فلا تختار نوع عهدة ← «تسليم». الرصيد يصير 63، والطلب «سُلّم».<br><br>
+      <span class="ex-h">مثال 2 (غير متوفرة):</span> سارة طلبت علبتي حبر. الرصيد 0، فيظهر «غير متوفر».<br>
+      1. «اطلعت» ← «بانتظار الشراء» وملاحظة: «الشراء يوم الأحد». سارة ترى أن طلبها بانتظار الشراء.<br>
+      2. اشتريت علبتين بـ 25,000 للعلبة. على الطلب نفسه: «إدخال المشتريات» ← المادة والكمية جاهزتان ← إجمالي التكلفة: <span class="num">50,000</span> ← حفظ. الرصيد يصير 2.<br>
+      3. «تسليم». الرصيد يرجع 0، والطلب «سُلّم».<br><br>
+      <span class="ex-h">مثال 3 (عهدة):</span> موظف طلب حاسوباً. عند «تسليم» اختر <b>عهدة شخصية</b>، فيصله إشعار ليؤكد استلامه، ويظهر الحاسوب في «العهد» باسمه.</div>
+  </div>
+
+  <div class="box">
+    <h3>4. رجوع عهدة</h3>
+    <div class="where">القائمة ← العهد ← افتح العهدة ← إرجاع العهدة</div>
+    <ul>
+      <li>المادة <b>سليمة</b>: اترك «إعادة للرصيد» مفعّلاً، فترجع للمخزن.</li>
+      <li>المادة <b>تالفة</b>: أطفئ «إعادة للرصيد» واكتب ملاحظة بالسبب (إلزامية هنا).</li>
+    </ul>
+    <div class="example"><span class="ex-h">مثال:</span> علي من فريق الصيانة أرجع الحاسوب.<br>
+      الحاسوب سليم ← «إعادة للرصيد» مفعّل ← «إرجاع». رصيد الحاسوب يزيد 1.<br>
+      الحاسوب شاشته مكسورة ← «إعادة للرصيد» مطفأ ← ملاحظة: «الشاشة مكسورة، غير صالح» ← «إرجاع». الرصيد لا يتغير.</div>
+  </div>
+
+  <div class="box">
+    <h3>5. الجرد وتصحيح الرصيد</h3>
+    <div class="where">المخزن ← المواد ← زر «تسوية» تحت المادة</div>
+    <ul>
+      <li><b>الكمية:</b> موجبة تزيد الرصيد، سالبة تنقصه. مثال: النظام 50 والرف 47، اكتب <b>‎-3</b>.</li>
+      <li><b>السبب:</b> إلزامي، مثل «فرق جرد تشرين الثاني» أو «تالف».</li>
+    </ul>
+    <div class="example"><span class="ex-h">مثال:</span> نهاية الشهر عدّيت الورق: النظام يقول <span class="num">63</span>، والرف فيه <span class="num">60</span>.<br>
+      «المواد» ← ورق A4 ← «تسوية» ← الكمية: <span class="minus">-3</span> ← السبب: «فرق جرد نهاية تشرين الثاني» ← حفظ. الرصيد يصير 60.<br>
+      ولو لقيت <span class="num">65</span> (أكثر)، تكتب <span class="plus">+2</span>.</div>
+    <div class="warn">لا تستعمل التسوية بدل وصل الشراء. التسوية لا ترسل مصروفاً للمحاسب ولا تحدّث سعر المادة.</div>
+  </div>
+
+  <div class="box">
+    <h3>6. المتابعة والتقارير</h3>
+    <ul>
+      <li><b>كل يوم:</b> لوحة التحكم. إذا «منخفضة المخزون» أكبر من صفر، خطّط للشراء.</li>
+      <li><b>حركة المخزون:</b> سجل كل حركة: من نفّذها ومتى والرصيد بعدها.</li>
+      <li><b>التقارير:</b> المخزون الحالي، المنخفض، النافد، القيمة الإجمالية، المشتريات خلال فترة، المصروف لكل فريق، حركة مادة. كلها تُصدَّر PDF أو Excel.</li>
+    </ul>
+    <div class="example"><span class="ex-h">أمثلة على أسئلة يجيب عنها النظام:</span>
+      <ul>
+        <li>«كم صرفنا لفريق الصيانة هذا الشهر؟» ← التقارير ← المصروف لكل فريق ← من 2026-11-01 إلى 2026-11-30 ← فريق الصيانة ← عرض.</li>
+        <li>«أين ذهب الورق؟» ← التقارير ← حركة مادة ← ورق A4 والفترة ← يعرض كل دخول وخروج ومن نفّذه.</li>
+        <li>«ماذا أشتري؟» ← التقارير ← المواد منخفضة المخزون، ثم صدّره Excel وأرسله.</li>
+      </ul></div>
+  </div>
+
+  <h2>مثال كامل: قصة «ورق A4» من أول يوم</h2>
+  <p>هذا ما تراه في «حركة المخزون» لمادة الورق بعد كل الأمثلة السابقة. كل سطر حركة، والرصيد بعدها:</p>
+  <table>
+    <tr><th>التاريخ</th><th>ماذا حدث</th><th>نوع الحركة</th><th>الكمية</th><th>الرصيد بعدها</th></tr>
+    <tr><td class="num">11-09</td><td>أُضيفت المادة ST-001 (الدرجة 3)</td><td>(لا حركة)</td><td>—</td><td class="num">0</td></tr>
+    <tr><td class="num">11-09</td><td>20 رزمة قديمة على الرف بزر «إدخال»</td><td>إدخال</td><td class="plus">+20</td><td class="num">20</td></tr>
+    <tr><td class="num">11-11</td><td>اعتماد وصل مكتبة النور 1045</td><td>شراء</td><td class="plus">+50</td><td class="num">70</td></tr>
+    <tr><td class="num">11-12</td><td>اعتماد سند S-031 لفريق الصيانة</td><td>صرف</td><td class="minus">-5</td><td class="num">65</td></tr>
+    <tr><td class="num">11-16</td><td>تسليم طلب سارة</td><td>صرف</td><td class="minus">-2</td><td class="num">63</td></tr>
+    <tr><td class="num">11-30</td><td>جرد نهاية الشهر: الرف فيه 60</td><td>تسوية</td><td class="minus">-3</td><td class="num">60</td></tr>
+  </table>
+  <div class="example"><b>الخلاصة:</b> الرصيد 60، وهو أكبر من الحد الأدنى 10، فالحالة «متوفر». لو نزل إلى 10 يصير «منخفض المخزون» وتشتري. وكل رقم هنا تعرف من أين جاء ومن سجّله.</div>
+
+  <h2>قواعد ذهبية</h2>
+  <div class="rules">
+    <div class="rule"><b>لا شيء يُحذف.</b> كل حركة تبقى مسجلة باسم من نفّذها. الخطأ يُصحَّح بحركة عكسية.</div>
+    <div class="rule"><b>المسودة لا تغيّر المخزون.</b> فقط «اعتماد» يغيّره. راجع قبل أن تعتمد.</div>
+    <div class="rule"><b>المعتمد لا يُعدَّل.</b> للتصحيح: «عكس» مع السبب، ثم مستند جديد صحيح.</div>
+    <div class="rule"><b>الموظف تراه بالاسم والقسم فقط.</b> لا تظهر لك بياناته الأخرى ولا أي بيانات مالية.</div>
+  </div>
+
+  <h2>إذا صار... افعل</h2>
+  <table>
+    <tr><th style="width:42%">الموقف</th><th>الحل</th></tr>
+    <tr><td>لا أجد التصنيف أو الوحدة عند إضافة مادة.</td><td>أضفه أولاً من «التصنيفات والوحدات»، أو تأكد أنه مفعّل.</td></tr>
+    <tr><td>اعتمدت وصل شراء بسعر أو كمية خطأ.</td><td>افتح الوصل ← «عكس» مع السبب، ثم سجّل وصلاً جديداً صحيحاً واعتمده.</td></tr>
+    <tr><td>أخطأت في كمية «إدخال».</td><td>«حركة المخزون» ← الحركة ← «عكس بتصحيح».</td></tr>
+    <tr><td>أضفت مادة بالخطأ.</td><td>«حذف» يعمل فقط إذا ليس عليها أي حركة. غير ذلك أطفئ «مفعّل» لأرشفتها.</td></tr>
+    <tr><td>سند الصرف لا يقبل الكمية.</td><td>الكمية أكبر من المتوفر. أدخل المشتريات أولاً.</td></tr>
+    <tr><td>الجرد أظهر نقصاً.</td><td>«المواد ← تسوية» بكمية سالبة مع السبب.</td></tr>
+    <tr><td>موظف أرجع حاسوباً تالفاً.</td><td>«العهد ← إرجاع العهدة»، أطفئ «إعادة للرصيد» واكتب السبب.</td></tr>
+  </table>
+
+  <p class="footer">سلّم المخزن · ملخص من دليل مسؤول المخزن الكامل</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,655 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
+import '../api/generated/hr_api.dart';
+import '../core/l10n/locale_controller.dart';
+import '../core/l10n/strings.dart';
+import '../core/session/session_controller.dart';
+import '../core/theme/motion.dart';
+import '../core/theme/tokens.dart';
+import '../core/widgets/motion_widgets.dart';
+import '../core/widgets/hr_logo.dart';
+import '../core/widgets/person_avatar.dart';
+import '../features/eval/review_reports_page.dart' show standInForProvider;
+import '../features/notifications/unread_count.dart';
+
+class NavItem {
+  const NavItem(this.path, this.icon, this.label, {this.operation, this.anyOf = const <String>[], this.admin = false});
+  final String path;
+  final IconData icon;
+  final String Function(S s) label;
+
+  /// Shown only when the user holds this operation's x-permission.
+  final String? operation;
+
+  /// Alternatively shown when any of these operations is granted.
+  final List<String> anyOf;
+
+  /// Listed under the administration section.
+  final bool admin;
+
+  bool visibleFor(Session session) {
+    if (session.isSystemAdminOnly && isHiddenForSystemAdmin(path)) return false;
+    if (session.isOutsideSchedule && isHiddenOutsideSchedule(path)) return false;
+    if (session.isHrWithoutSystemAdmin && isHiddenForHrManager(path)) return false;
+    if (session.isBackOfficeOnly && isHiddenForBackOffice(path)) return false;
+    if (session.isExecutive && isHiddenForExecutive(path)) return false;
+    if (session.isReviewer && isHiddenForReviewer(session, path)) return false;
+    if (operation == null && anyOf.isEmpty) return true;
+    if (operation != null && session.can(operation!)) return true;
+    return anyOf.any(session.can);
+  }
+}
+
+/// Employee-facing pages that a system admin (without a business role) does not use.
+/// Each entry hides the page and its sub-routes.
+const systemAdminHiddenPaths = <String>[
+  '/team',
+  '/delegations',
+  '/shifts',
+  '/circulars',
+  '/notices',
+  '/leaves',
+  '/attendance',
+  '/memos',
+  '/incidents',
+  '/complaints',
+  '/evaluations',
+  '/custody',
+  '/payslips',
+  '/contracts',
+  '/warnings',
+  '/appreciation',
+  '/holidays',
+];
+
+/// Hidden exactly, sub-routes kept: '/requests/:id' stays reachable from the inbox and
+/// notifications, so the system admin can still open a request he has to act on.
+const systemAdminHiddenExactPaths = <String>[
+  '/requests',
+  '/requests/new',
+];
+
+/// Pages hidden from the HR manager (decision 2026-11-10): roles and permissions are the system admin's.
+const hrManagerHiddenPaths = <String>['/roles'];
+
+/// List pages hidden from the HR manager, sub-pages kept (decision 2026-11-17): «تبليغاتي» goes, «إرسال تبليغ» stays,
+/// and a notice sent to the HR manager still opens from its notification ('/notices/:id').
+const hrManagerHiddenExactPaths = <String>['/notices'];
+
+bool isHiddenForHrManager(String location) =>
+    hrManagerHiddenExactPaths.contains(location) || hrManagerHiddenPaths.any((p) => location == p || location.startsWith('$p/'));
+
+/// Pages hidden from the executive director (decision 2026-11-11). The list pages only: a request, a warning or an
+/// evaluation objection opened from the inbox or a notification ('/requests/:id', '/warnings/:id',
+/// '/evaluations/open/:id') stays reachable. «المالية» joined on 2026-11-14: a payroll run he must approve still opens
+/// from its notification ('/finance/payroll/:id').
+const executiveHiddenExactPaths = <String>['/requests', '/requests/new', '/warnings', '/evaluations', '/complaints/new', '/finance'];
+const executiveHiddenPaths = <String>['/leaves', '/attendance', '/holidays', '/leave-balances', '/payslips', '/contracts'];
+
+bool isHiddenForExecutive(String location) =>
+    executiveHiddenExactPaths.contains(location) || executiveHiddenPaths.any((p) => location == p || location.startsWith('$p/'));
+
+/// «تقييماتي» is hidden from the reviewer (decision 2026-11-14): no one evaluates the reviewer. The evaluations page
+/// goes with it unless another role gives it the team or company tab.
+bool isHiddenForReviewer(Session session, String location) =>
+    location == '/evaluations/my' ||
+    location.startsWith('/evaluations/my/') ||
+    (location == '/evaluations' && !session.can(HrOps.Evaluation_GetTeamList) && !session.can(HrOps.Evaluation_GetHrList));
+
+/// Pages hidden from an accountant or store officer with no other business role (decision 2026-11-11).
+const backOfficeHiddenPaths = <String>['/circulars', '/evaluations', '/warnings', '/appreciation', '/notices', '/holidays'];
+
+bool isHiddenForBackOffice(String location) => backOfficeHiddenPaths.any((p) => location == p || location.startsWith('$p/'));
+
+/// Personal attendance and leave pages, hidden from the roles with no shift (executive, HR manager, system admin).
+const outsideScheduleHiddenPaths = <String>['/leaves', '/attendance'];
+
+bool isHiddenOutsideSchedule(String location) =>
+    outsideScheduleHiddenPaths.any((p) => location == p || location.startsWith('$p/'));
+
+/// Exact path or a sub-route of it ('/attendance' must not match '/attendance-admin').
+bool isHiddenForSystemAdmin(String location) =>
+    systemAdminHiddenExactPaths.contains(location) ||
+    systemAdminHiddenPaths.any((p) => location == p || location.startsWith('$p/'));
+
+final navItems = <NavItem>[
+  NavItem('/', Icons.space_dashboard_outlined, (s) => s.home),
+  NavItem('/inbox', Icons.pending_actions_outlined, (s) => s.inbox, operation: HrOps.Request_GetInbox),
+  NavItem('/requests', Icons.assignment_outlined, (s) => s.myRequests, operation: HrOps.Request_GetMy),
+  NavItem('/leaves', Icons.beach_access_outlined, (s) => s.leaves, operation: HrOps.LeaveBalance_GetMy),
+  NavItem('/attendance', Icons.schedule_outlined, (s) => s.attendance, operation: HrOps.Attendance_GetMy),
+  NavItem('/notifications', Icons.notifications_none, (s) => s.notifications, operation: HrOps.Notification_List),
+  NavItem('/memos', Icons.description_outlined, (s) => s.t('المطالعات', 'Memos'), anyOf: [HrOps.Memo_GetMy, HrOps.Memo_GetInbox]),
+  NavItem('/incidents', Icons.build_circle_outlined, (s) => s.t('بلاغات الأعطال', 'Fault incidents'), anyOf: [HrOps.Incident_GetMy, HrOps.Incident_GetInbox]),
+  NavItem('/complaints', Icons.shield_outlined, (s) => s.t('الشكاوى', 'Complaints'), anyOf: [HrOps.Complaint_GetMyList, HrOps.Complaint_GetAssignedList]),
+  NavItem('/circulars', Icons.campaign_outlined, (s) => s.t('التعاميم', 'Circulars'), operation: HrOps.Circular_GetReceivedList),
+  NavItem('/notices', Icons.mark_email_unread_outlined, (s) => s.t('تبليغاتي', 'My notices'), operation: HrOps.Notice_GetReceivedList),
+  NavItem('/evaluations', Icons.rate_review_outlined, (s) => s.t('التقييمات', 'Evaluations'),
+      anyOf: [HrOps.Evaluation_GetMyList, HrOps.Evaluation_GetTeamList, HrOps.Evaluation_GetHrList]),
+  NavItem('/custody', Icons.inventory_2_outlined, (s) => s.t('العهد', 'Custody'), anyOf: [HrOps.Custody_GetMy, HrOps.Custody_GetTeam, HrOps.Custody_GetList]),
+  NavItem('/payslips', Icons.receipt_long_outlined, (s) => s.t('قسائم الراتب', 'Payslips'), operation: HrOps.Payslip_GetMyList),
+  NavItem('/contracts', Icons.description_outlined, (s) => s.t('العقود', 'Contracts'), anyOf: [HrOps.Contract_GetMyList, HrOps.Contract_List]),
+  NavItem('/warnings', Icons.report_outlined, (s) => s.t('الإنذارات', 'Warnings'),
+      anyOf: [HrOps.Warning_GetMyList, HrOps.Warning_GetRecommendedByMe, HrOps.Warning_List, HrOps.Warning_GetObjections]),
+  NavItem('/appreciation', Icons.workspace_premium_outlined, (s) => s.t('كتب الشكر', 'Appreciation letters'),
+      anyOf: [HrOps.AppreciationLetter_GetMyList, HrOps.AppreciationLetter_List]),
+  NavItem('/holidays', Icons.event_note_outlined, (s) => s.t('العطل', 'Holidays'), operation: HrOps.Holiday_List),
+  NavItem('/delegations', Icons.swap_horizontal_circle_outlined, (s) => s.t('التفويض', 'Delegations'), operation: HrOps.Delegation_GetMy),
+  NavItem('/profile', Icons.person_outline, (s) => s.profile),
+  NavItem('/team', Icons.groups_2_outlined, (s) => s.t('فريقي', 'My team'), operation: HrOps.Manager_GetMyTeam, admin: true),
+  NavItem('/team-calendar', Icons.calendar_month_outlined, (s) => s.t('تقويم إجازات الفريق', 'Team leave calendar'), operation: HrOps.LeaveCalendar_GetTeam, admin: true),
+  NavItem('/attendance-admin', Icons.fact_check_outlined, (s) => s.t('حضور الموظفين', 'Employee attendance'), operation: HrOps.Attendance_GetByEmployee, admin: true),
+  NavItem('/leave-balances', Icons.account_balance_wallet_outlined, (s) => s.t('أرصدة الإجازات', 'Leave balances'), operation: HrOps.LeaveBalance_Adjust, admin: true),
+  NavItem('/employees', Icons.badge_outlined, (s) => s.t('الموظفون', 'Employees'), operation: HrOps.Employee_List, admin: true),
+  NavItem('/send-notice', Icons.forward_to_inbox_outlined, (s) => s.t('إرسال تبليغ', 'Send a notice'), operation: HrOps.Notice_Create, admin: true),
+  NavItem('/send-warning', Icons.report_gmailerrorred_outlined, (s) => s.t('إرسال إنذار', 'Send a warning'), operation: HrOps.Warning_CreateByHr, admin: true),
+  NavItem('/hr-evaluations', Icons.grading_outlined, (s) => s.t('تقييم الموظفين', 'Employee evaluations'), operation: HrOps.HrEvaluation_Create, admin: true),
+  NavItem('/hr-evaluation-criteria', Icons.checklist_rtl, (s) => s.t('عناوين تقييم الموارد', 'HR evaluation headings'), operation: HrOps.HrEvaluationCriterion_Create, admin: true),
+  NavItem('/hr-evaluation-reports', Icons.summarize_outlined, (s) => s.t('تقارير تقييم الموارد', 'HR evaluation reports'), operation: HrOps.HrEvaluationReport_GetList, admin: true),
+  NavItem('/hr-evaluation-alerts', Icons.trending_down, (s) => s.t('تنبيهات التقييم', 'Evaluation alerts'), operation: HrOps.HrEvaluationAlert_GetList, admin: true),
+  NavItem('/reviewer-evaluations', Icons.fact_check_outlined, (s) => s.t('تقييمات المراجع', 'Reviewer evaluations'), operation: HrOps.ReviewerEvaluation_Create, admin: true),
+  NavItem('/reviewer-evaluation-criteria', Icons.checklist_rtl, (s) => s.t('عناوين تقييم المراجع', 'Reviewer evaluation headings'), operation: HrOps.ReviewerEvaluationCriterion_Create, admin: true),
+  NavItem('/reviewer-evaluation-reports', Icons.assignment_turned_in_outlined, (s) => s.t('تقارير تقييم المراجع', 'Reviewer evaluation reports'), operation: HrOps.ReviewerEvaluationReport_GetList, admin: true),
+  NavItem('/departments', Icons.apartment_outlined, (s) => s.t('الأقسام', 'Departments'), operation: HrOps.Department_List, admin: true),
+  NavItem('/accounts', Icons.manage_accounts_outlined, (s) => s.t('الحسابات', 'Accounts'), operation: HrOps.UserAccount_List, admin: true),
+  NavItem('/shifts', Icons.schedule_outlined, (s) => s.t('قوالب الدوام', 'Shift templates'), operation: HrOps.WorkShift_List, admin: true),
+  NavItem('/devices', Icons.fingerprint, (s) => s.t('أجهزة البصمة', 'Attendance devices'), operation: HrOps.AttendanceDevice_List, admin: true),
+  NavItem('/attendance-import', Icons.upload_file_outlined, (s) => s.t('استيراد الحضور', 'Attendance import'), operation: HrOps.AttendanceImport_List, admin: true),
+  NavItem('/attendance-settings', Icons.tune, (s) => s.t('إعدادات الحضور', 'Attendance settings'), operation: HrOps.AttendanceSettings_Update, admin: true),
+  NavItem('/leave-types', Icons.category_outlined, (s) => s.t('أنواع الإجازات', 'Leave types'), operation: HrOps.OtherLeaveType_List, admin: true),
+  NavItem('/complaint-handlers', Icons.gavel_outlined, (s) => s.t('معالجو الشكاوى', 'Complaint handlers'), operation: HrOps.ComplaintHandler_GetList, admin: true),
+  NavItem('/roles', Icons.admin_panel_settings_outlined, (s) => s.t('الأدوار والصلاحيات', 'Roles and permissions'), operation: HrOps.Role_List, admin: true),
+  NavItem('/store', Icons.warehouse_outlined, (s) => s.t('المخزن', 'Store'), anyOf: [HrOps.StockIssue_GetList, HrOps.Item_GetList], admin: true),
+  NavItem('/finance', Icons.account_balance_outlined, (s) => s.t('المالية', 'Finance'), anyOf: [HrOps.PayrollRun_List, HrOps.SalaryProfile_List], admin: true),
+  NavItem('/employee-salaries', Icons.payments_outlined, (s) => s.t('رواتب الموظفين', 'Employee salaries'), operation: HrOps.SalaryProfile_GetOverview, admin: true),
+  NavItem('/employee-contracts', Icons.assignment_ind_outlined, (s) => s.t('عقود الموظفين', 'Employee contracts'), operation: HrOps.Contract_GetOverview, admin: true),
+  NavItem('/department-reports', Icons.summarize_outlined, (s) => s.t('التقارير الشهرية', 'Monthly reports'), operation: HrOps.DepartmentReport_GetList, admin: true),
+  NavItem('/review-reports', Icons.insights_outlined, (s) => s.t('التقرير اليومي', 'Daily report'), operation: HrOps.ReviewReport_GetList, admin: true),
+  NavItem('/review-rooms', Icons.meeting_room_outlined, (s) => s.t('إنشاء غرف', 'Rooms'), operation: HrOps.ReviewRoom_Create, admin: true),
+  NavItem('/request-types', Icons.list_alt_outlined, (s) => s.t('أنواع الطلبات', 'Request types'), operation: HrOps.RequestType_GetAdminList, admin: true),
+  NavItem('/reports', Icons.bar_chart_outlined, (s) => s.t('التقارير', 'Reports'),
+      anyOf: [HrOps.Report_GetTeamAttendance, HrOps.Report_GetReviewDashboard, HrOps.Report_GetHrAttendance], admin: true),
+  NavItem('/system-settings', Icons.settings_suggest_outlined, (s) => s.t('إعدادات النظام', 'System settings'), operation: HrOps.SystemSettings_ListSections, admin: true),
+  NavItem('/audit-log', Icons.history_edu_outlined, (s) => s.t('سجل التدقيق', 'Audit log'), operation: HrOps.AuditLog_List, admin: true),
+];
+
+/// Pages shown first for the executive director (decision 2026-11-11): the reviewer's daily report and the HR
+/// evaluation reports.
+const executiveTopPaths = <String>['/review-reports', '/reviewer-evaluation-reports', '/hr-evaluation-reports'];
+
+/// A titled group of sidebar pages.
+class NavSection {
+  const NavSection(this.title, this.paths);
+  final String Function(S s) title;
+  final List<String> paths;
+}
+
+/// The HR manager's sidebar, in Zainab's order (decision 2026-11-11). A page shows only if the HR manager may open it.
+final hrManagerSections = <NavSection>[
+  NavSection((s) => s.t('القائمة الرئيسية', 'Main'), ['/', '/inbox', '/requests', '/notifications', '/memos', '/profile']),
+  NavSection((s) => s.t('الخدمات الوظيفية', 'Employment services'), ['/payslips', '/leave-balances', '/holidays', '/custody', '/contracts', '/delegations']),
+  NavSection((s) => s.t('التواصل والمتابعة', 'Communication and follow-up'),
+      ['/notices', '/circulars', '/send-notice', '/send-warning', '/complaints', '/incidents', '/evaluations', '/appreciation', '/warnings']),
+  NavSection((s) => s.t('الإدارة والموظفون', 'Administration and employees'),
+      ['/employees', '/team', '/attendance-admin', '/departments', '/shifts', '/devices', '/attendance-import', '/accounts']),
+  NavSection((s) => s.t('التقييم والأداء', 'Evaluation and performance'),
+      ['/hr-evaluations', '/hr-evaluation-criteria', '/hr-evaluation-alerts', '/hr-evaluation-reports', '/complaint-handlers']),
+  NavSection((s) => s.t('المالية والتقارير', 'Finance and reports'), ['/finance', '/department-reports', '/reports']),
+  NavSection((s) => s.t('النظام', 'System'), ['/system-settings']),
+];
+
+/// The visible pages in sidebar order, each with the section title to show before it (null for none). The HR manager
+/// gets [hrManagerSections]; any other visible page of theirs (from a second role, for instance) follows under «أخرى».
+/// Everyone else keeps the list order with «الإدارة» before the first administration page.
+({List<NavItem> items, List<String Function(S s)?> headers}) navLayout(Session session, {Set<String> alsoVisible = const {}}) {
+  // alsoVisible: pages opened by something other than a permission, such as a stand-in's delegation (2026-11-11).
+  final visible = navItems.where((i) => i.visibleFor(session) || alsoVisible.contains(i.path)).toList();
+  if (!session.isHrWithoutSystemAdmin) {
+    // Executive director (decision 2026-11-11): the evaluation reports sent by the reviewer and the HR manager come
+    // first, right after the home page, under their own title.
+    // Store officer and accountant (decisions 2026-11-11): the store and finance come right after the home page,
+    // with no title of their own.
+    final executiveTop = session.isExecutive;
+    final top = executiveTop
+        ? [for (final p in executiveTopPaths) ...visible.where((i) => i.path == p)]
+        : visible.where((i) => (i.path == '/store' && session.hasRole(AppRole.storeOfficer)) || (i.path == '/finance' && session.hasRole(AppRole.accountant))).toList();
+    final home = visible.where((i) => i.path == '/').toList();
+    final rest = visible.where((i) => i.path != '/' && !top.contains(i)).toList();
+    final items = [...home, ...top, ...rest];
+    return (
+      items: items,
+      headers: [
+        for (var i = 0; i < items.length; i++)
+          if (executiveTop && top.isNotEmpty && items[i] == top.first)
+            (S s) => s.t('تقارير التقييم', 'Evaluation reports')
+          else if (executiveTop && top.isNotEmpty && i == home.length + top.length)
+            (S s) => s.t('القائمة', 'Menu')
+          else if (items[i].admin && !top.contains(items[i]) && (i == 0 || !items[i - 1].admin || top.contains(items[i - 1])))
+            (S s) => s.t('الإدارة', 'Administration')
+          else
+            null,
+      ],
+    );
+  }
+
+  final remaining = {for (final i in visible) i.path: i};
+  final items = <NavItem>[];
+  final headers = <String Function(S s)?>[];
+  void add(String Function(S s) title, Iterable<NavItem> group) {
+    var first = true;
+    for (final item in group) {
+      items.add(item);
+      headers.add(first ? title : null);
+      first = false;
+    }
+  }
+
+  for (final section in hrManagerSections) {
+    add(section.title, [for (final p in section.paths) if (remaining.containsKey(p)) remaining.remove(p)!]);
+  }
+  add((s) => s.t('أخرى', 'Other'), [for (final i in visible) if (remaining.containsKey(i.path)) i]);
+  return (items: items, headers: headers);
+}
+
+/// Desktop ≥1280: full sidebar. Tablet 768–1279: collapsed rail (symbol only). Mobile <768: drawer.
+/// Ambient light behind everything, a floating translucent top bar, and page transitions.
+class AppShell extends ConsumerWidget {
+  const AppShell({super.key, required this.child, required this.location});
+  final Widget child;
+  final String location;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final session = ref.watch(sessionProvider);
+    // A stand-in for a reviewer sees the daily report and its rooms during the delegation (decision 2026-11-11).
+    final standIn = (ref.watch(standInForProvider).valueOrNull ?? const []).isNotEmpty;
+    final layout = navLayout(session, alsoVisible: {if (standIn) ...{'/review-reports', '/review-rooms'}});
+    final items = layout.items;
+    final headers = layout.headers;
+    final width = MediaQuery.sizeOf(context).width;
+    final selected = _selectedIndex(items);
+    final page = RepaintBoundary(child: _PageTransition(location: location, child: child));
+
+    if (width < 768) {
+      return Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          backgroundColor: context.hr.bg.withValues(alpha: .85),
+          title: const HrLogo(size: 26, clearSpace: false),
+          actions: const [_TopActions()],
+        ),
+        drawer: Drawer(child: SafeArea(child: _SideNav(items: items, headers: headers, selected: selected, extended: true, floating: false))),
+        body: AmbientBackground(child: SafeArea(child: page)),
+      );
+    }
+    return Scaffold(
+      body: AmbientBackground(
+        child: SafeArea(
+          child: Row(
+            children: [
+              RepaintBoundary(child: _SideNav(items: items, headers: headers, selected: selected, extended: width >= 1280)),
+              Expanded(
+                child: Column(children: [
+                  const _TopBar(),
+                  Expanded(child: page),
+                ]),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  int _selectedIndex(List<NavItem> items) {
+    var best = -1;
+    var bestLen = -1;
+    for (var i = 0; i < items.length; i++) {
+      final p = items[i].path;
+      final match = p == '/' ? location == '/' : location.startsWith(p);
+      if (match && p.length > bestLen) {
+        best = i;
+        bestLen = p.length;
+      }
+    }
+    return best;
+  }
+}
+
+/// Page enter: opacity + 16 px rise (450 ms), replayed on every location change.
+/// The shell's child is go_router's nested Navigator (it owns a GlobalKey), so it must never be
+/// duplicated or re-keyed: an AnimatedSwitcher here kept two copies alive during the switch,
+/// which broke the page area (blank and unresponsive). This animates the same child in place.
+class _PageTransition extends StatefulWidget {
+  const _PageTransition({required this.location, required this.child});
+  final String location;
+  final Widget child;
+
+  @override
+  State<_PageTransition> createState() => _PageTransitionState();
+}
+
+class _PageTransitionState extends State<_PageTransition> with SingleTickerProviderStateMixin {
+  late final AnimationController _c = AnimationController(vsync: this, duration: HrMotion.pageIn, value: 1);
+
+  @override
+  void didUpdateWidget(covariant _PageTransition old) {
+    super.didUpdateWidget(old);
+    if (old.location != widget.location && !HrMotion.reduced(context)) {
+      _c.forward(from: 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _c.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _c,
+      child: widget.child,
+      builder: (context, child) {
+        final t = HrMotion.enter.transform(_c.value);
+        return Opacity(
+          opacity: t.clamp(0.0, 1.0),
+          child: Transform.translate(offset: Offset(0, HrMotion.pageShift * (1 - t)), child: child),
+        );
+      },
+    );
+  }
+}
+
+/// Floating, translucent top bar with notifications, language and theme.
+class _TopBar extends StatelessWidget {
+  const _TopBar();
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.hr;
+    return Padding(
+      padding: const EdgeInsetsDirectional.fromSTEB(12, 12, 16, 4),
+      // Translucent without a live backdrop blur: on some GPUs (Edge without hardware
+      // acceleration) a backdrop filter kept the page under it from painting until a resize.
+      child: Container(
+        height: 60,
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        decoration: BoxDecoration(
+          color: c.surface.withValues(alpha: .82),
+          borderRadius: BorderRadius.circular(HrColors.radiusCard),
+          border: Border.all(color: c.border.withValues(alpha: .7)),
+        ),
+        child: const Row(children: [Spacer(), _TopActions()]),
+      ),
+    );
+  }
+}
+
+class _SideNav extends ConsumerStatefulWidget {
+  const _SideNav({required this.items, required this.headers, required this.selected, required this.extended, this.floating = true});
+  final List<NavItem> items;
+
+  /// The section title before each item, or null.
+  final List<String Function(S s)?> headers;
+  final int selected;
+  final bool extended;
+  final bool floating;
+
+  @override
+  ConsumerState<_SideNav> createState() => _SideNavState();
+}
+
+class _SideNavState extends ConsumerState<_SideNav> {
+  final _stackKey = GlobalKey();
+  final _keys = <int, GlobalKey>{};
+  Rect? _indicator;
+
+  GlobalKey _key(int i) => _keys.putIfAbsent(i, GlobalKey.new);
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _measure());
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _measure());
+  }
+
+  @override
+  void didUpdateWidget(covariant _SideNav old) {
+    super.didUpdateWidget(old);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _measure());
+  }
+
+  /// Places the shared active indicator on the selected tile (it then slides between tiles).
+  void _measure() {
+    if (!mounted) return;
+    final stack = _stackKey.currentContext?.findRenderObject() as RenderBox?;
+    final tile = widget.selected < 0 ? null : _keys[widget.selected]?.currentContext?.findRenderObject() as RenderBox?;
+    Rect? r;
+    if (stack != null && tile != null && tile.attached && stack.attached) {
+      final o = tile.localToGlobal(Offset.zero, ancestor: stack);
+      r = o & tile.size;
+    }
+    if (r != _indicator) setState(() => _indicator = r);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final s = S.of(context);
+    final c = context.hr;
+    final items = widget.items;
+    final extended = widget.extended;
+    final reduced = HrMotion.reduced(context);
+    final ind = _indicator;
+    final rtl = Directionality.of(context) == TextDirection.rtl;
+
+    final list = Stack(key: _stackKey, children: [
+      if (ind != null)
+        AnimatedPositioned(
+          duration: reduced ? Duration.zero : HrMotion.navIndicator,
+          curve: HrMotion.spring,
+          left: ind.left,
+          top: ind.top,
+          width: ind.width,
+          height: ind.height - 4,
+          child: TweenAnimationBuilder<double>(
+            tween: Tween(begin: reduced ? 1 : 0, end: 1),
+            duration: HrMotion.navIndicator,
+            curve: HrMotion.spring,
+            builder: (context, t, _) => Transform(
+              alignment: rtl ? Alignment.centerRight : Alignment.centerLeft,
+              transform: Matrix4.diagonal3Values(t, 1, 1),
+              child: Stack(children: [
+                Positioned.fill(
+                  child: DecoratedBox(decoration: BoxDecoration(color: c.glow, borderRadius: BorderRadius.circular(12))),
+                ),
+                PositionedDirectional(
+                  start: 0,
+                  top: 10,
+                  bottom: 10,
+                  width: 3,
+                  child: DecoratedBox(decoration: BoxDecoration(color: c.accent, borderRadius: BorderRadius.circular(2))),
+                ),
+              ]),
+            ),
+          ),
+        ),
+      Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        for (var i = 0; i < items.length; i++) ...[
+          if (widget.headers[i] != null && (extended || i > 0))
+            extended
+                ? Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(14, i == 0 ? 4 : 14, 14, 6),
+                    child: Text(widget.headers[i]!(s), style: Theme.of(context).textTheme.labelSmall?.copyWith(color: c.textSecondary)),
+                  )
+                : const Divider(height: 20),
+          // measured outside the slide-in transform so the indicator lands on the final position
+          KeyedSubtree(
+            key: _key(i),
+            child: FadeSlideIn(
+              duration: HrMotion.navSlide,
+              delay: Duration(milliseconds: 25 * (i < 16 ? i : 16)),
+              offset: const Offset(24, 0),
+              child: _NavTile(item: items[i], selected: i == widget.selected, extended: extended, label: items[i].label(s)),
+            ),
+          ),
+        ],
+      ]),
+    ]);
+
+    return Container(
+      width: extended ? 264 : 84,
+      margin: widget.floating ? const EdgeInsets.all(12) : EdgeInsets.zero,
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+      decoration: widget.floating
+          ? BoxDecoration(
+              color: c.surface.withValues(alpha: .86),
+              borderRadius: BorderRadius.circular(HrColors.radiusCard),
+              border: Border.all(color: c.border),
+              boxShadow: c.shadow,
+            )
+          : null,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Center(child: HrLogo(size: extended ? 34 : 30, showWordmark: extended, animateIn: true)),
+          const SizedBox(height: 4),
+          Expanded(
+            child: NotificationListener<ScrollMetricsNotification>(
+              onNotification: (_) {
+                WidgetsBinding.instance.addPostFrameCallback((_) => _measure());
+                return false;
+              },
+              child: SingleChildScrollView(child: list),
+            ),
+          ),
+          _NavTile(
+            item: NavItem('', Icons.logout, (s) => s.signOut),
+            selected: false,
+            extended: extended,
+            label: s.signOut,
+            onTap: () => ref.read(sessionProvider.notifier).signOut(),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _NavTile extends StatelessWidget {
+  const _NavTile({required this.item, required this.selected, required this.extended, required this.label, this.onTap});
+  final NavItem item;
+  final bool selected;
+  final bool extended;
+  final String label;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.hr;
+    final color = selected ? c.accent : c.textSecondary;
+    final tile = Material(
+      type: MaterialType.transparency,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: onTap ??
+            () {
+              Scaffold.maybeOf(context)?.closeDrawer();
+              context.go(item.path);
+            },
+        child: Container(
+          constraints: const BoxConstraints(minHeight: 44),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+          child: Row(
+            mainAxisAlignment: extended ? MainAxisAlignment.start : MainAxisAlignment.center,
+            children: [
+              Icon(item.icon, color: color, size: 22),
+              if (extended) ...[
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Text(label,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(color: selected ? c.textPrimary : c.textSecondary, fontWeight: selected ? FontWeight.w700 : FontWeight.w500)),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 4),
+      child: Semantics(
+        selected: selected,
+        button: true,
+        child: extended ? tile : Tooltip(message: label, child: tile),
+      ),
+    );
+  }
+}
+
+class _TopActions extends ConsumerWidget {
+  const _TopActions();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final s = S.of(context);
+    final session = ref.watch(sessionProvider);
+    // A chime for every new notification (decision 2026-11-11). The bell is always on screen, so it listens here.
+    ref.listen<AsyncValue<int>>(unreadCountProvider, NotificationSound.onUnreadChanged);
+    final unread = ref.watch(unreadCountProvider).valueOrNull ?? 0;
+    final isAr = ref.watch(localeProvider).languageCode == 'ar';
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    return Row(mainAxisSize: MainAxisSize.min, children: [
+      if (session.can(HrOps.Notification_List))
+        IconButton(
+          tooltip: s.notifications,
+          onPressed: () => context.go('/notifications'),
+          icon: Badge(isLabelVisible: unread > 0, label: Text('$unread'), child: const Icon(Icons.notifications_none)),
+        ),
+      IconButton(
+        tooltip: s.language,
+        onPressed: () {
+          ref.read(localeProvider.notifier).set(isAr ? 'en' : 'ar');
+          // The dashboard name comes from the server in the request language, so read it again.
+          ref.read(sessionProvider.notifier).refreshMe();
+        },
+        icon: Text(isAr ? 'EN' : 'ع', style: const TextStyle(fontWeight: FontWeight.w700)),
+      ),
+      IconButton(
+        tooltip: dark ? s.themeLight : s.themeDark,
+        onPressed: () => ref.read(themeModeProvider.notifier).set(dark ? ThemeMode.light : ThemeMode.dark),
+        icon: AnimatedSwitcher(
+          duration: HrMotion.press,
+          child: Icon(dark ? Icons.light_mode_outlined : Icons.dark_mode_outlined, key: ValueKey(dark)),
+        ),
+      ),
+      if (session.me != null)
+        Padding(
+          padding: const EdgeInsetsDirectional.only(start: 4, end: 4),
+          child: Tooltip(
+            message: s.profile,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(22),
+              onTap: () => context.go('/profile'),
+              child: SizedBox(
+                width: 44,
+                height: 44,
+                child: Center(
+                  child: PersonAvatar(name: session.me!.displayName, photoId: session.me!.photoId),
+                ),
+              ),
+            ),
+          ),
+        ),
+    ]);
+  }
+}

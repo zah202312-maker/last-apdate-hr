@@ -1,0 +1,76 @@
+# HR — Flutter front end (mobile + web)
+
+Built from `api-contract/openapi.yaml` (the only source for routes and fields) and the
+approved UI/UX package in `frontend/HR_project` + `frontend/HR-Design-System.md`.
+
+## Layout
+```
+tool/generate_api.py        contract → Dart client generator (do not hand-write API calls)
+lib/api/generated/          GENERATED: models, one *_api.dart per tag, operations.dart
+lib/api/runtime/            transport (Dio wrapper, ApiException, JSON helpers)
+lib/core/                   auth (PKCE), network (interceptors), session (access gate),
+                            theme (Design System V3 tokens), l10n (ar/en), widgets
+lib/features/<feature>/     screens: home, requests, leaves, attendance, notifications, profile, auth
+web/auth/callback.html      OAuth redirect page for Flutter Web
+```
+Stack: Riverpod, go_router, Dio, flutter_web_auth_2 (Authorization Code + PKCE).
+
+## First run (Windows, from the repository root)
+```powershell
+cd frontend
+flutter create --org com.hrsystem --project-name hr_app --platforms=android,ios,web .
+flutter pub get
+flutter analyze
+flutter test
+```
+`flutter create .` only adds the missing platform folders; it does not overwrite `lib/`.
+
+## Regenerate the API client after any contract change
+```powershell
+pip install pyyaml
+python frontend/tool/generate_api.py
+```
+Every method name is the full `operationId` (`x-server-requirements.clients`), for example
+`api.requests.Request_Approve(id: ..., body: NoteInputDto(...))`.
+
+## Run
+Web (the OAuth callback defaults to the current web origin; `HR_WEB_REDIRECT_URI` is only needed when overriding it):
+```powershell
+flutter run -d chrome --web-port 5000 `
+  --dart-define=HR_API_BASE_URL=https://localhost:44382
+```
+Android emulator: `--dart-define=HR_API_BASE_URL=https://10.0.2.2:44382` (the dev certificate must be trusted
+by the emulator).
+
+### Physical Android phone (USB)
+Chrome on the phone will not hand the OAuth code back to the app from a page with a certificate
+warning, and the ASP.NET dev certificate cannot be installed on Android (it is not a CA). So:
+1. A local dev CA and a `localhost` certificate signed by it live in `%USERPROFILE%\.hr-dev-certs`
+   (never in the repo). The backend serves that certificate on a second endpoint,
+   `https://localhost:44383`, configured in `appsettings.secrets.json` (`Kestrel:Endpoints:PhoneHttps`);
+   `44382` keeps the normal dev certificate for the computer's browser.
+2. Install `hr-dev-ca.crt` on the phone once: Settings → Security → Encryption & credentials →
+   Install a certificate → CA certificate.
+3. `powershell -ExecutionPolicy Bypass -File frontend/tool/run_android.ps1` maps the phone's
+   `localhost:44382` to the computer's `44383`, so the OAuth issuer stays `https://localhost:44382`.
+   Re-run `adb reverse tcp:44382 tcp:44383` after reconnecting the cable.
+
+### Android: OAuth callback
+After `flutter create`, add inside `<application>` in `android/app/src/main/AndroidManifest.xml`:
+```xml
+<activity android:name="com.linusu.flutter_web_auth_2.CallbackActivity" android:exported="true">
+  <intent-filter android:label="flutter_web_auth_2">
+    <action android:name="android.intent.action.VIEW" />
+    <category android:name="android.intent.category.DEFAULT" />
+    <category android:name="android.intent.category.BROWSABLE" />
+    <data android:scheme="com.hrsystem.app" />
+  </intent-filter>
+</activity>
+```
+
+## Rules kept in code
+- UI visibility from `grantedPolicies` + each operation's `x-permission` (`Session.can(HrOps.X)`); the server still decides.
+- Errors are matched on `error.code` (`lib/core/l10n/error_messages.dart`, texts from the UI/UX package), never on message text.
+- Access gate: 403 `Hr:Identity:PasswordChangeRequired` / `MfaEnrollmentRequired` and `accessGate` from `/me` route to the mandatory screen.
+- `Accept-Language` set in one interceptor; tokens in secure storage on mobile and memory only on web.
+- `Idempotency-Key` (uuid per form) on create operations that declare it.
